@@ -1,27 +1,47 @@
 document.addEventListener("DOMContentLoaded", function () {
   let isAudioStarted = false;
 
-  // BPM Range
-  const bpm = Math.floor(Math.random() * (140 - 120 + 1)) + 120;
-
   // Initialize Tone.js
   Tone.start();
 
-  // Create a simple kick drum synth
-  const kick = new Tone.MembraneSynth({
-    pitchDecay: 0.01,
-    octaves: 6,
-    oscillator: { type: "sine" },
-    envelope: {
-      attack: 0.001,
-      decay: 0.4,
-      sustain: 0,
-      release: 0.05,
-    },
-  }).toDestination();
+  function generateRandomKickParams() {
+    const minPitch = Tone.Frequency("C1").toMidi(); // Convert C1 to MIDI
+    const maxPitch = Tone.Frequency("C2").toMidi(); // Convert C2 to MIDI
+  
+    return {
+      pitchDecay: Math.random() * 0.1 + 0.01,
+      octaves: Math.floor(Math.random() * 3) + 4,
+      oscillator: { type: "sine" },
+      envelope: {
+        attack: Math.random() * 0.01 + 0.001,
+        decay: Math.random() * 0.2 + 0.2,
+        sustain: 0,
+        release: Math.random() * 0.1 + 0.01,
+      },
+      pitch: {
+        min: minPitch,
+        max: maxPitch,
+      },
+    };
+  }
+  
+
+  // Function to create a new kick drum synth with random parameters
+  function createNewKick() {
+    // Dispose the old synth
+    kick.dispose();
+    // Generate new random kick parameters
+    kickParams = generateRandomKickParams();
+    // Create a new synth with random parameters
+    kick = new Tone.MembraneSynth(kickParams).toDestination();
+  }
+
+  // Create a simple kick drum synth with initial random parameters
+  let kickParams = generateRandomKickParams();
+  let kick = new Tone.MembraneSynth(kickParams).toDestination();
 
   // Create a simple closed hi-hat synth
-  const hiHat = new Tone.MetalSynth({
+  let hiHat = new Tone.MetalSynth({
     frequency: 400,
     envelope: {
       attack: 0.001,
@@ -35,7 +55,7 @@ document.addEventListener("DOMContentLoaded", function () {
   }).toDestination();
 
   // Create a simple snare drum synth
-  const snare = new Tone.NoiseSynth({
+  let snare = new Tone.NoiseSynth({
     envelope: {
       attack: 0.001,
       decay: 0.06,
@@ -72,7 +92,7 @@ document.addEventListener("DOMContentLoaded", function () {
   }, [null, "C2"]).start(0);
 
   // Connect everything and set BPM
-  Tone.Transport.bpm.value = bpm;
+  Tone.Transport.bpm.value = Math.floor(Math.random() * (140 - 120 + 1)) + 120;
 
   // Start and stop buttons
   const startBtn = document.getElementById("startBtn");
@@ -92,4 +112,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Use Tone.Transport.start() to ensure consistent initialization
   Tone.Transport.start();
+
+  // Refresh event to create a new kick drum synth with random parameters on each page reload
+  window.addEventListener("beforeunload", createNewKick);
 });
