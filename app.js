@@ -7,31 +7,40 @@ document.addEventListener("DOMContentLoaded", function () {
   Tone.start();
 
   // Create instances of kick, hi-hat, and snare
-  const kick = new Kick(window.globalControls.volumes.kick, window.globalControls.keys.kick);
-  const hiHat = new HiHat(window.globalControls.volumes.hiHat, window.globalControls.keys.hiHat);
-  const snare = new Snare(window.globalControls.volumes.snare, window.globalControls.keys.snare);
+  const kick = new Kick(
+    globalControls.volumes.kick,
+    `${globalControls.globalKey}1` // Use only the global key
+  );
+  const hiHat = new HiHat(
+    globalControls.volumes.hiHat,
+    `${globalControls.globalKey}1` // Use only the global key
+  );
+  const snare = new Snare(
+    globalControls.volumes.snare,
+    `${globalControls.globalKey}1` // Use only the global key
+  );
 
   // Drum beat pattern
   const kickPattern = new Tone.Pattern((time, note) => {
     if (note !== null) {
       kick.triggerAttackRelease(time);
     }
-  }, [window.globalControls.keys.kick]).start(0);
+  }, [`${globalControls.globalKey}1`]).start(0);
 
   const hiHatPattern = new Tone.Pattern((time, note) => {
     if (note !== null) {
       hiHat.triggerAttackRelease(time);
     }
-  }, [window.globalControls.keys.hiHat]).start("8n");
+  }, [`${globalControls.globalKey}1`]).start("8n");
 
   const snarePattern = new Tone.Pattern((time, note) => {
     if (note !== null) {
       snare.triggerAttackRelease(time);
     }
-  }, [null, window.globalControls.keys.snare]).start(0);
+  }, [null, `${globalControls.globalKey}1`]).start(0);
 
   // Connect everything and set BPM
-  Tone.Transport.bpm.value = window.globalControls.bpm;
+  Tone.Transport.bpm.value = globalControls.bpm;
 
   // Start and stop buttons
   const startBtn = document.getElementById("startBtn");
@@ -54,8 +63,17 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Refresh event to create a new kick drum synth with random parameters on each page reload
   window.addEventListener("beforeunload", () => {
-    kick.createNewKick(window.globalControls.volumes.kick, window.globalControls.keys.kick);
-    hiHat.createNewHiHat(window.globalControls.volumes.hiHat, window.globalControls.keys.hiHat);
-    snare.createNewSnare(window.globalControls.volumes.snare, window.globalControls.keys.snare);
+    kick.createNewKick(
+      globalControls.volumes.kick,
+      `${globalControls.globalKey}1`
+    );
+    hiHat.createNewHiHat(
+      globalControls.volumes.hiHat,
+      `${globalControls.globalKey}1`
+    );
+    snare.createNewSnare(
+      globalControls.volumes.snare,
+      `${globalControls.globalKey}1`
+    );
   });
 });

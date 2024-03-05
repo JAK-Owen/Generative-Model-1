@@ -7,12 +7,8 @@ const globalControls = {
       snare: -6,
       hiHat: -6,
     },
-    keys: {
-      kick: "C1",
-      snare: "D1",
-      hiHat: "E1",
-    },
-    bpm: 120,
+    globalKey: "F", 
+    bpm: 128,
   };
   
   // Function to update global controls
