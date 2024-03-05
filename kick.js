@@ -5,8 +5,8 @@ class Kick {
     }
   
     generateRandomKickParams() {
-      const minPitch = Tone.Frequency("C1").toMidi();
-      const maxPitch = Tone.Frequency("C2").toMidi();
+      const minPitch = Tone.Frequency("F0").toMidi();
+      const maxPitch = Tone.Frequency("C1").toMidi();
   
       return {
         pitchDecay: Math.random() * 0.1 + 0.01,
@@ -26,7 +26,7 @@ class Kick {
     }
   
     triggerAttackRelease(time) {
-      this.synth.triggerAttackRelease("C2", "8n", time);
+      this.synth.triggerAttackRelease("C1", "8n", time);
     }
   
     createNewKick() {
