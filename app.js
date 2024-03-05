@@ -15,8 +15,8 @@ document.addEventListener("DOMContentLoaded", function () {
     envelope: {
       attack: 0.001,
       decay: 0.4,
-      sustain: 0.01,
-      release: 0.4,
+      sustain: 0,
+      release: 0.05,
     },
   }).toDestination();
 
@@ -25,8 +25,8 @@ document.addEventListener("DOMContentLoaded", function () {
     frequency: 400,
     envelope: {
       attack: 0.001,
-      decay: 0.1,
-      release: 0.1,
+      decay: 0.03,
+      release: 0.02,
     },
     harmonicity: 5.1,
     modulationIndex: 16,
@@ -38,15 +38,16 @@ document.addEventListener("DOMContentLoaded", function () {
   const snare = new Tone.NoiseSynth({
     envelope: {
       attack: 0.001,
-      decay: 0.2,
+      decay: 0.06,
       sustain: 0,
+      release: 0.05,
     },
     filter: {
       Q: 1,
     },
     filterEnvelope: {
       attack: 0.001,
-      decay: 0.1,
+      decay: 0.02,
       sustain: 0,
     },
   }).toDestination();
@@ -58,12 +59,11 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }, ["C2"]).start(0);
 
-
   const hiHatPattern = new Tone.Pattern((time, note) => {
     if (note !== null) {
       hiHat.triggerAttackRelease("16n", time);
     }
-  }, ["C2"]).start("8n"); // Delayed by half a beat
+  }, ["C2"]).start("8n");
 
   const snarePattern = new Tone.Pattern((time, note) => {
     if (note !== null) {
@@ -75,7 +75,10 @@ document.addEventListener("DOMContentLoaded", function () {
   Tone.Transport.bpm.value = bpm;
 
   // Start and stop buttons
-  document.getElementById("startBtn").addEventListener("click", () => {
+  const startBtn = document.getElementById("startBtn");
+  const stopBtn = document.getElementById("stopBtn");
+
+  startBtn.addEventListener("click", () => {
     if (!isAudioStarted) {
       Tone.start();
       isAudioStarted = true;
@@ -83,7 +86,10 @@ document.addEventListener("DOMContentLoaded", function () {
     Tone.Transport.start();
   });
 
-  document.getElementById("stopBtn").addEventListener("click", () => {
+  stopBtn.addEventListener("click", () => {
     Tone.Transport.stop();
   });
+
+  // Use Tone.Transport.start() to ensure consistent initialization
+  Tone.Transport.start();
 });
