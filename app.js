@@ -1,5 +1,7 @@
 document.addEventListener("DOMContentLoaded", function () {
   let isAudioStarted = false;
+  let bassLoopCount = 0;
+  const maxBassLoops = 4; // Adjust the maximum number of bass loops as needed
 
   // Initialize Tone.js
   Tone.start();
@@ -26,9 +28,8 @@ document.addEventListener("DOMContentLoaded", function () {
   // Drum beat pattern
   const kickPattern = new Tone.Pattern((time, note) => {
     if (note !== null) {
-      // Trigger kick attack/release and mark the time
+      // Trigger kick attack/release
       kick.triggerAttackRelease(time);
-      kickPattern.lastTime = time;
     }
   }, [`${globalControls.globalKey}1`]).start(0);
 
@@ -44,15 +45,34 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }, [null, `${globalControls.globalKey}1`]).start(0);
 
-  // Bass pattern
-  const bassPattern = new Tone.Pattern((time, note) => {
-    if (note !== null) {
-      // Check if the bass note time coincides with the kick note time
-      if (kickPattern.lastTime !== time) {
-        bass.triggerAttackRelease(time);
-      }
-    }
-  }, [`${globalControls.globalKey}1`]).start("8n");
+// Bass pattern
+const bassPattern = new Tone.Pattern((time, note) => {
+  if (note !== null) {
+    bass.triggerAttackRelease(time);
+  }
+}, generateRandomBassPattern()).start("8n");
+
+// Function to generate a random bass pattern
+function generateRandomBassPattern() {
+  const patternLength = 8; // You can adjust the length of the pattern as needed
+  const randomBassPattern = [];
+
+  for (let i = 0; i < patternLength; i++) {
+    const shouldPlayBass = Math.random() < 0.7; // Adjust the probability as needed
+    randomBassPattern.push(shouldPlayBass ? `${globalControls.globalKey}1` : null);
+  }
+
+  return randomBassPattern;
+}
+
+// Main loop to control the number of bass loops
+Tone.Transport.scheduleRepeat((time) => {
+  if (bassLoopCount < maxBassLoops) {
+    // Trigger the bass loop
+    bassPattern.index = 0; // Reset the bass pattern index
+    bassLoopCount++;
+  }
+}, "4n");
 
   // Connect everything and set BPM
   Tone.Transport.bpm.value = globalControls.bpm;
@@ -94,5 +114,6 @@ document.addEventListener("DOMContentLoaded", function () {
       globalControls.volumes.bass,
       `${globalControls.globalKey}1`
     );
+    bassLoopCount = 0; // Reset the bass loop count on refresh
   });
 });
