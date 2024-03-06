@@ -1,5 +1,3 @@
-// app.js
-
 document.addEventListener("DOMContentLoaded", function () {
   let isAudioStarted = false;
 
@@ -28,7 +26,9 @@ document.addEventListener("DOMContentLoaded", function () {
   // Drum beat pattern
   const kickPattern = new Tone.Pattern((time, note) => {
     if (note !== null) {
+      // Trigger kick attack/release and mark the time
       kick.triggerAttackRelease(time);
+      kickPattern.lastTime = time;
     }
   }, [`${globalControls.globalKey}1`]).start(0);
 
@@ -44,10 +44,13 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }, [null, `${globalControls.globalKey}1`]).start(0);
 
-
+  // Bass pattern
   const bassPattern = new Tone.Pattern((time, note) => {
     if (note !== null) {
-      bass.triggerAttackRelease(time);
+      // Check if the bass note time coincides with the kick note time
+      if (kickPattern.lastTime !== time) {
+        bass.triggerAttackRelease(time);
+      }
     }
   }, [`${globalControls.globalKey}1`]).start("8n");
 
