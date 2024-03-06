@@ -6,6 +6,7 @@ const globalControls = {
       kick: -6,
       snare: -6,
       hiHat: -6,
+      bass: -6,
     },
     globalKey: "F", 
     bpm: 128,

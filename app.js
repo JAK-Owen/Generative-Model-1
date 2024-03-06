@@ -20,6 +20,11 @@ document.addEventListener("DOMContentLoaded", function () {
     `${globalControls.globalKey}1` // Use only the global key
   );
 
+  const bass = new Bass(
+    globalControls.volumes.bass,
+    `${globalControls.globalKey}1` // Use only the global key
+  );
+
   // Drum beat pattern
   const kickPattern = new Tone.Pattern((time, note) => {
     if (note !== null) {
@@ -38,6 +43,13 @@ document.addEventListener("DOMContentLoaded", function () {
       snare.triggerAttackRelease(time);
     }
   }, [null, `${globalControls.globalKey}1`]).start(0);
+
+
+  const bassPattern = new Tone.Pattern((time, note) => {
+    if (note !== null) {
+      bass.triggerAttackRelease(time);
+    }
+  }, [`${globalControls.globalKey}1`]).start("8n");
 
   // Connect everything and set BPM
   Tone.Transport.bpm.value = globalControls.bpm;
@@ -73,6 +85,10 @@ document.addEventListener("DOMContentLoaded", function () {
     );
     snare.createNewSnare(
       globalControls.volumes.snare,
+      `${globalControls.globalKey}1`
+    );
+    bass.createNewBass(
+      globalControls.volumes.bass,
       `${globalControls.globalKey}1`
     );
   });
