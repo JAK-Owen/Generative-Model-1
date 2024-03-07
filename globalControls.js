@@ -2,11 +2,11 @@
 const globalControls = {
   volumes: {
     kick: -1,
-    snare: -6,
-    hiHat: -6,
+    snare: -3,
+    hiHat: -4,
     bass: -1,
   },
-  globalKey: "E",
+  globalKey: "F",
   bpm: 128,
 };
 

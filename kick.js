@@ -1,5 +1,5 @@
 class Kick {
-  constructor(volume, globalKey) {
+  constructor(volume) {
     this.params = this.generateRandomKickParams();
     this.synth = new Tone.MembraneSynth({
       ...this.params,
@@ -8,8 +8,8 @@ class Kick {
   }
 
   generateRandomKickParams() {
-    const minPitch = Tone.Frequency("F0").toMidi();
-    const maxPitch = Tone.Frequency("C1").toMidi();
+    const minPitch = Tone.Frequency(`${globalControls.globalKey}1`).toMidi();
+    const maxPitch = Tone.Frequency(`${globalControls.globalKey}2`).toMidi();
 
     return {
       pitchDecay: Math.random() * 0.1 + 0.01,
@@ -29,23 +29,14 @@ class Kick {
   }
 
   triggerAttackRelease(time) {
-    this.synth.triggerAttackRelease("C1", "8n", time);
+    // Trigger attack release with specific note and duration
+    const note = Tone.Frequency(this.params.pitch.min, "midi").toNote();
+    this.synth.triggerAttackRelease(note, "8n", time);
   }
 
-  createNewKick() {
+  createNewKick(volume) {
     this.synth.dispose();
     this.params = this.generateRandomKickParams();
-    this.synth = new Tone.MembraneSynth({
-      ...this.params,
-      volume: volume + globalControls.volumes.kick,
-    }).toDestination();
-  }
-
-  updateGlobalControls(newControls) {
-    this.synth.dispose(); // Dispose the existing synth
-    Object.assign(globalControls, newControls);
-    this.params = this.generateRandomKickParams();
-    // Recreate the synth with updated parameters
     this.synth = new Tone.MembraneSynth({
       ...this.params,
       volume: volume + globalControls.volumes.kick,

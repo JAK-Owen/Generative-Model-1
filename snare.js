@@ -1,17 +1,20 @@
 class Snare {
-  constructor(volume, globalKey) {
-    this.setRandomSnareParameters();
+  constructor(volume) {
+    this.params = this.generateRandomSnareParams();
+    this.synth = new Tone.NoiseSynth({
+      ...this.params,
+      volume: volume + globalControls.volumes.snare,
+    }).toDestination();
   }
 
-  setRandomSnareParameters() {
-    const attack = this.randomInRange(0.001, 0.01); // Sharp and immediate attack
-    const decay = this.randomInRange(0.01, 0.1); // Short to moderate decay
-    const sustain = this.randomInRange(0.001, 0.01); // Reduced sustain level for a tighter sound
-    const release = this.randomInRange(0.001, 0.02); // Short release time
-    const pitch = this.randomInRange(-12, 12); // Tune the snare within a range of -12 to 12 semitones
+  generateRandomSnareParams() {
+    const attack = this.randomInRange(0.001, 0.01);
+    const decay = this.randomInRange(0.01, 0.1);
+    const sustain = this.randomInRange(0.001, 0.01);
+    const release = this.randomInRange(0.001, 0.02);
+    const pitch = this.randomInRange(-12, 12);
 
-    // Create a new NoiseSynth instance with random parameters
-    this.synth = new Tone.NoiseSynth({
+    return {
       envelope: {
         attack: attack,
         decay: decay,
@@ -26,10 +29,8 @@ class Snare {
         decay: 0.02,
         sustain: 0,
       },
-    }).toDestination();
-
-    // Apply pitch tuning
-    this.synth.pitch = pitch;
+      pitch: pitch,
+    };
   }
 
   triggerAttackRelease(time) {
@@ -40,37 +41,17 @@ class Snare {
     return Math.random() * (max - min) + min;
   }
 
-  updateGlobalControls(newControls) {
-    this.synth.dispose(); // Dispose the existing synth
-    Object.assign(globalControls, newControls);
-    this.setRandomSnareParameters();
-    // Recreate the synth with updated parameters
+  createNewSnare(volume) {
+    this.synth.dispose();
+    this.params = this.generateRandomSnareParams();
     this.synth = new Tone.NoiseSynth({
-      envelope: {
-        attack: attack,
-        decay: decay,
-        sustain: sustain,
-        release: release,
-      },
-      filter: {
-        Q: 1,
-      },
-      filterEnvelope: {
-        attack: 0.001,
-        decay: 0.02,
-        sustain: 0,
-      },
+      ...this.params,
+      volume: volume + globalControls.volumes.snare,
     }).toDestination();
-
-    // Apply pitch tuning
-    this.synth.pitch = pitch;
   }
 }
 
-// Create an instance of the Snare class
 const snare = new Snare();
-
-// Drum beat pattern for snare
 const snarePattern = new Tone.Pattern((time, note) => {
   if (note !== null) {
     snare.triggerAttackRelease(time);

@@ -1,5 +1,5 @@
 class Bass {
-  constructor(volume, globalKey) {
+  constructor(volume) {
     this.params = this.generateTechnoBassParams();
     this.synth = new Tone.MembraneSynth({
       ...this.params,
@@ -8,13 +8,13 @@ class Bass {
   }
 
   generateTechnoBassParams() {
-    const minPitch = Tone.Frequency("F1").toMidi();
-    const maxPitch = Tone.Frequency("C1").toMidi();
+    const minPitch = Tone.Frequency(`${globalControls.globalKey}1`).toMidi();
+    const maxPitch = Tone.Frequency(`${globalControls.globalKey}2`).toMidi();
 
     return {
       pitchDecay: Math.random() * 0.01 + 0.001,
       octaves: Math.floor(Math.random() * 3) + 4,
-      oscillator: { type: "sine" },
+      oscillator: { type: "triangle" },
       envelope: {
         attack: Math.random() * 0.01 + 0.1,
         decay: Math.random() * 0.05 + 0.5,
@@ -30,7 +30,8 @@ class Bass {
 
   triggerAttackRelease(time) {
     // Trigger attack release with specific note and duration
-    this.synth.triggerAttackRelease("C2", "8n", time);
+    const note = Tone.Frequency(this.params.pitch.min, "midi").toNote();
+    this.synth.triggerAttackRelease(note, "8n", time);
   }
 
   createNewTechnoBass() {
@@ -38,7 +39,7 @@ class Bass {
     this.params = this.generateTechnoBassParams();
     this.synth = new Tone.MembraneSynth({
       ...this.params,
-      volume: volume + globalControls.volumes.bass,
+      volume: globalControls.volumes.bass,
     }).toDestination();
   }
 
@@ -46,10 +47,10 @@ class Bass {
     this.synth.dispose(); // Dispose the existing synth
     Object.assign(globalControls, newControls);
     this.params = this.generateTechnoBassParams();
-    // Recreate the synth with updated parameters
+    // Recreate the synth with updated parameters, including the globalKey
     this.synth = new Tone.MembraneSynth({
       ...this.params,
-      volume: volume + globalControls.volumes.bass,
+      volume: globalControls.volumes.bass,
     }).toDestination();
   }
 }
