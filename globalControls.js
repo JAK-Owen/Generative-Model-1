@@ -3,10 +3,10 @@
 // Global control parameters
 const globalControls = {
   volumes: {
-    kick: -6,
-    snare: -6,
-    hiHat: -6,
-    bass: -6,
+    kick: -3,
+    snare: -4,
+    hiHat: -4,
+    bass: -3,
   },
   globalKey: "F",
   bpm: 128,
