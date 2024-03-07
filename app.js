@@ -1,29 +1,15 @@
 document.addEventListener("DOMContentLoaded", function () {
   let isAudioStarted = false;
   let bassLoopCount = 0;
-  const maxBassLoops = 4; // Adjust the maximum number of bass loops as needed
 
   // Initialize Tone.js
   Tone.start();
 
-  // Create instances of kick, hi-hat, and snare
-  const kick = new Kick(
-    globalControls.volumes.kick,
-    `${globalControls.globalKey}1` // Use only the global key
-  );
-  const hiHat = new HiHat(
-    globalControls.volumes.hiHat,
-    `${globalControls.globalKey}1` // Use only the global key
-  );
-  const snare = new Snare(
-    globalControls.volumes.snare,
-    `${globalControls.globalKey}1` // Use only the global key
-  );
-
-  const bass = new Bass(
-    globalControls.volumes.bass,
-    `${globalControls.globalKey}1` // Use only the global key
-  );
+  // Create instances of kick, hi-hat, snare, and bass with global controls
+  const kick = new Kick(globalControls.volumes.kick, globalControls.globalKey);
+  const hiHat = new HiHat(globalControls.volumes.hiHat, globalControls.globalKey);
+  const snare = new Snare(globalControls.volumes.snare, globalControls.globalKey);
+  const bass = new Bass(globalControls.volumes.bass, globalControls.globalKey);
 
   // Drum beat pattern
   const kickPattern = new Tone.Pattern((time, note) => {
@@ -45,34 +31,33 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }, [null, `${globalControls.globalKey}1`]).start(0);
 
-// Bass pattern
-const bassPattern = new Tone.Pattern((time, note) => {
-  if (note !== null) {
-    bass.triggerAttackRelease(time);
+  // Bass pattern
+  const bassPattern = new Tone.Pattern((time, note) => {
+    if (note !== null) {
+      bass.triggerAttackRelease(time);
+    }
+  }, generateRandomBassPattern()).start("8n");
+
+  function generateRandomBassPattern() {
+    const patternLength = 8; // To adjust the length of the pattern
+    const randomBassPattern = [];
+
+    for (let i = 0; i < patternLength; i++) {
+      const shouldPlayBass = Math.random() < 0.7; // Adjust the probability 
+      randomBassPattern.push(shouldPlayBass ? `${globalControls.globalKey}1` : null);
+    }
+
+    return randomBassPattern;
   }
-}, generateRandomBassPattern()).start("8n");
 
-// Function to generate a random bass pattern
-function generateRandomBassPattern() {
-  const patternLength = 8; // You can adjust the length of the pattern as needed
-  const randomBassPattern = [];
-
-  for (let i = 0; i < patternLength; i++) {
-    const shouldPlayBass = Math.random() < 0.7; // Adjust the probability as needed
-    randomBassPattern.push(shouldPlayBass ? `${globalControls.globalKey}1` : null);
-  }
-
-  return randomBassPattern;
-}
-
-// Main loop to control the number of bass loops
-Tone.Transport.scheduleRepeat((time) => {
-  if (bassLoopCount < maxBassLoops) {
-    // Trigger the bass loop
-    bassPattern.index = 0; // Reset the bass pattern index
-    bassLoopCount++;
-  }
-}, "4n");
+  // Main loop to control the number of bass loops
+  Tone.Transport.scheduleRepeat((time) => {
+    if (bassLoopCount < maxBassLoops) {
+      // Trigger the bass loop
+      bassPattern.index = 0; // Reset the bass pattern index
+      bassLoopCount++;
+    }
+  }, "4n");
 
   // Connect everything and set BPM
   Tone.Transport.bpm.value = globalControls.bpm;
@@ -96,24 +81,12 @@ Tone.Transport.scheduleRepeat((time) => {
   // Use Tone.Transport.start() to ensure consistent initialization
   Tone.Transport.start();
 
-  // Refresh event to create a new kick drum synth with random parameters on each page reload
+  // Refresh event to create new drum synth instances on each page reload
   window.addEventListener("beforeunload", () => {
-    kick.createNewKick(
-      globalControls.volumes.kick,
-      `${globalControls.globalKey}1`
-    );
-    hiHat.createNewHiHat(
-      globalControls.volumes.hiHat,
-      `${globalControls.globalKey}1`
-    );
-    snare.createNewSnare(
-      globalControls.volumes.snare,
-      `${globalControls.globalKey}1`
-    );
-    bass.createNewBass(
-      globalControls.volumes.bass,
-      `${globalControls.globalKey}1`
-    );
+    kick.updateGlobalControls(globalControls);
+    hiHat.updateGlobalControls(globalControls);
+    snare.updateGlobalControls(globalControls);
+    bass.updateGlobalControls(globalControls);
     bassLoopCount = 0; // Reset the bass loop count on refresh
   });
 });
