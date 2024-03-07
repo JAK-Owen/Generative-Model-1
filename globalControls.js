@@ -1,22 +1,22 @@
+// globalControls.js
+
 // Global control parameters
 const globalControls = {
   volumes: {
-    kick: -1,
-    snare: -3,
-    hiHat: -4,
-    bass: -1,
+    kick: -6,
+    snare: -6,
+    hiHat: -6,
+    bass: -6,
   },
   globalKey: "F",
   bpm: 128,
+  patternLength: 4, 
 };
 
-// Function to update global controls
+// Function to update gobal controls
 function updateGlobalControls(newControls) {
   Object.assign(globalControls, newControls);
-  kick.updateGlobalControls(globalControls);
-  hiHat.updateGlobalControls(globalControls);
-  snare.updateGlobalControls(globalControls);
-  bass.updateGlobalControls(globalControls);
+  // You can add more logic here if needed
 }
 
 // Assign to the global object (window in the browser)
