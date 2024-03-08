@@ -20,6 +20,10 @@ class Snare {
     const sustain = this.randomInRange(0.001, 0.01);
     const release = this.randomInRange(0.001, 0.02);
     const pitch = this.randomInRange(-12, 12);
+    const filterFrequency = this.randomInRange(1000, 5000); 
+    const filterQ = this.randomInRange(1, 5); 
+    const noiseType = Math.random() < 0.5 ? 'white' : 'pink'; // Randomly choose between white and pink noise
+    const modulationIndex = this.randomInRange(5, 20); 
 
     const envelope = {
       attack: attack || 0.001,
@@ -31,13 +35,19 @@ class Snare {
     this.synth = new Tone.NoiseSynth({
       envelope: envelope,
       filter: {
-        Q: 1,
+        type: 'lowpass',
+        frequency: filterFrequency,
+        Q: filterQ,
       },
       filterEnvelope: {
         attack: 0.001,
         decay: 0.02,
         sustain: 0,
       },
+      noise: {
+        type: noiseType,
+      },
+      modulationIndex: modulationIndex,
       // Do not set volume here
     }).toDestination();
 
@@ -69,6 +79,8 @@ class Snare {
       envelope: this.synth.envelope,
       filter: this.synth.filter,
       filterEnvelope: this.synth.filterEnvelope,
+      noise: this.synth.noise,
+      modulationIndex: this.synth.modulationIndex,
     }).toDestination();
   }
 }

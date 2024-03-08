@@ -20,6 +20,10 @@ class HiHat {
     const frequency = this.randomInRange(8000, 12000);
     const decay = this.randomInRange(0.01, 0.1);
     const attack = this.randomInRange(0.001, 0.005);
+    const harmonicity = this.randomInRange(2, 7); 
+    const modulationIndex = this.randomInRange(5, 20); 
+    const resonance = this.randomInRange(2000, 8000); 
+    const octaves = Math.floor(this.randomInRange(1, 4)); 
 
     const envelope = {
       attack: attack || 0.001,
@@ -30,10 +34,10 @@ class HiHat {
     this.synth = new Tone.MetalSynth({
       frequency: frequency,
       envelope: envelope,
-      harmonicity: 5.1,
-      modulationIndex: 16,
-      resonance: 4000,
-      octaves: 1.5,
+      harmonicity: harmonicity,
+      modulationIndex: modulationIndex,
+      resonance: resonance,
+      octaves: octaves,
       // Do not set volume here
     }).toDestination();
 

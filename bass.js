@@ -1,3 +1,5 @@
+// bass.js
+
 class Bass {
   constructor(volume, key) {
     this.params = this.generateTechnoBassParams();
@@ -14,7 +16,7 @@ class Bass {
     return {
       pitchDecay: Math.random() * 0.01 + 0.001,
       octaves: Math.floor(Math.random() * 3) + 4,
-      oscillator: { type: "triangle" },
+      oscillator: { type: this.randomOscillatorType() }, // Randomize oscillator type
       envelope: {
         attack: Math.random() * 0.01 + 0.1,
         decay: Math.random() * 0.05 + 0.5,
@@ -54,10 +56,16 @@ class Bass {
 
   adjustSynthParams(filterFreq, resonance, distortion) {
     if (this.synth && this.synth.filter && this.synth.filter.frequency) {
-      this.synth.oscillator.type = "triangle"; // Reset oscillator type
+      this.synth.oscillator.type = this.randomOscillatorType(); // Reset oscillator type
       this.synth.filter.frequency.value = filterFreq;
       this.synth.filter.Q.value = resonance;
       this.synth.distortion = distortion;
     }
+  }
+
+  // Function to generate a random oscillator type
+  randomOscillatorType() {
+    const oscillatorTypes = ["sine", "triangle"];
+    return oscillatorTypes[Math.floor(Math.random() * oscillatorTypes.length)];
   }
 }

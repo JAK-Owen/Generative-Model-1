@@ -1,3 +1,5 @@
+// kick.js
+
 class Kick {
   constructor(volume) {
     this.params = this.generateRandomKickParams();
@@ -14,7 +16,7 @@ class Kick {
     return {
       pitchDecay: Math.random() * 0.1 + 0.01,
       octaves: Math.floor(Math.random() * 3) + 4,
-      oscillator: { type: "sine" },
+      oscillator: { type: this.randomOscillatorType() }, // Randomize oscillator type
       envelope: {
         attack: Math.random() * 0.01 + 0.001,
         decay: Math.random() * 0.2 + 0.2,
@@ -41,5 +43,11 @@ class Kick {
       ...this.params,
       volume: volume + globalControls.volumes.kick,
     }).toDestination();
+  }
+
+  // Function to generate a random oscillator type
+  randomOscillatorType() {
+    const oscillatorTypes = ["sine", "triangle"];
+    return oscillatorTypes[Math.floor(Math.random() * oscillatorTypes.length)];
   }
 }
