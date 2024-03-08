@@ -4,7 +4,7 @@
 const globalControls = {
   volumes: {
     kick: -1,
-    snare: -6,
+    snare: -5,
     hiHat: -3,
     bass: -1,
   },

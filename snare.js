@@ -4,17 +4,23 @@ class Snare {
   constructor() {
     // Initialize with default parameters
     this.setRandomSnareParameters();
+
+    // Connect to globalControls
+    window.updateSnareVolume = this.updateVolume.bind(this);
+    window.updateSnareControls = this.updateGlobalControls.bind(this);
+
+    // Set initial volume using the updateVolume function
+    this.updateVolume();
   }
 
   // Function to set random snare parameters
   setRandomSnareParameters() {
-    const attack = this.randomInRange(0.001, 0.01); // Sharp and immediate attack
-    const decay = this.randomInRange(0.01, 0.1); // Short to moderate decay
-    const sustain = this.randomInRange(0.001, 0.01); // Reduced sustain level for a tighter sound
-    const release = this.randomInRange(0.001, 0.02); // Short release time
-    const pitch = this.randomInRange(-12, 12); // Tune the snare within a range of -12 to 12 semitones
+    const attack = this.randomInRange(0.001, 0.01);
+    const decay = this.randomInRange(0.01, 0.1);
+    const sustain = this.randomInRange(0.001, 0.01);
+    const release = this.randomInRange(0.001, 0.02);
+    const pitch = this.randomInRange(-12, 12);
 
-    // Ensure envelope parameters are not null or undefined
     const envelope = {
       attack: attack || 0.001,
       decay: decay || 0.01,
@@ -22,7 +28,6 @@ class Snare {
       release: release || 0.02,
     };
 
-    // Create a new NoiseSynth instance with random parameters
     this.synth = new Tone.NoiseSynth({
       envelope: envelope,
       filter: {
@@ -33,9 +38,9 @@ class Snare {
         decay: 0.02,
         sustain: 0,
       },
+      // Do not set volume here
     }).toDestination();
 
-    // Apply pitch tuning
     this.synth.pitch = pitch;
   }
 
@@ -49,11 +54,17 @@ class Snare {
     return Math.random() * (max - min) + min;
   }
 
+  // Function to update volume based on global controls
+  updateVolume() {
+    this.synth.volume.value = globalControls.volumes.snare;
+  }
+
   // Function to update global controls
   updateGlobalControls(newControls) {
     this.synth.dispose();
     Object.assign(this, newControls);
     this.setRandomSnareParameters();
+    this.updateVolume();
     this.synth = new Tone.NoiseSynth({
       envelope: this.synth.envelope,
       filter: this.synth.filter,
