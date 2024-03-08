@@ -2,31 +2,50 @@
 
 class Bass {
   constructor(volume, key) {
-    this.params = this.generateTechnoBassParams();
+    this.params = this.generateRandomBassParams();
     this.synth = new Tone.MembraneSynth({
       ...this.params,
       volume: volume + globalControls.volumes.bass,
-    }).toDestination();
+      polyphony: 1,
+    });
+
+    // Add a low-pass filter with a cutoff frequency of 50Hz
+    this.lowPassFilter = new Tone.Filter({
+      type: 'lowpass',
+      frequency: 50,
+    });
+
+    // Connect the synth to the low-pass filter and then to the destination
+    this.synth.connect(this.lowPassFilter);
+    this.lowPassFilter.toDestination();
   }
 
-  generateTechnoBassParams() {
+  generateRandomBassParams() {
     const minPitch = Tone.Frequency(`${globalControls.globalKey}1`).toMidi();
-    const maxPitch = Tone.Frequency(`${globalControls.globalKey}2`).toMidi();
+    const maxPitch = Tone.Frequency(`${globalControls.globalKey}3`).toMidi();
 
     return {
-      pitchDecay: Math.random() * 0.01 + 0.001,
-      octaves: Math.floor(Math.random() * 3) + 4,
-      oscillator: { type: this.randomOscillatorType() }, // Randomize oscillator type
+      pitchDecay: Math.random() * 0.02 + 0.005,
+      octaves: Math.floor(Math.random() * 2) + 3,
+      oscillator: { type: this.randomOscillatorType() },
       envelope: {
-        attack: Math.random() * 0.01 + 0.1,
-        decay: Math.random() * 0.05 + 0.5,
-        sustain: 0,
-        release: Math.random() * 0.1 + 0.01,
+        attack: Math.random() * 0.05 + 0.1,
+        decay: Math.random() * 0.2 + 0.2,
+        sustain: Math.random() * 0.3 + 0.4,
+        release: Math.random() * 0.2 + 0.1,
       },
       pitch: {
         min: minPitch,
         max: maxPitch,
       },
+      filterFreq: Math.random() * 800 + 200,
+      resonance: Math.random() * 5 + 1,
+      distortion: Math.random() * 0.02,  // Reduced distortion for a cleaner sound
+      volumeSensitivity: Math.random() * 0.5 + 0.5,
+      portamento: Math.random() * 0.2,
+      modulationIndex: Math.random() * 30 + 1,
+      harmonicity: Math.random() * 5,
+      polyphony: 1,
     };
   }
 
@@ -35,37 +54,100 @@ class Bass {
     this.synth.triggerAttackRelease(note, "8n", time);
   }
 
-  createNewTechnoBass() {
+  createNewRandomBass() {
     this.synth.dispose();
-    this.params = this.generateTechnoBassParams();
+    this.params = this.generateRandomBassParams();
     this.synth = new Tone.MembraneSynth({
       ...this.params,
       volume: globalControls.volumes.bass,
-    }).toDestination();
+      polyphony: 1,
+    });
+
+    // Reconnect the new synth to the low-pass filter and then to the destination
+    this.synth.connect(this.lowPassFilter);
+    this.lowPassFilter.toDestination();
   }
 
   updateGlobalControls(newControls) {
     this.synth.dispose();
     Object.assign(globalControls, newControls);
-    this.params = this.generateTechnoBassParams();
+    this.params = this.generateRandomBassParams();
     this.synth = new Tone.MembraneSynth({
       ...this.params,
       volume: globalControls.volumes.bass,
-    }).toDestination();
+      polyphony: 1,
+    });
+
+    // Reconnect the updated synth to the low-pass filter and then to the destination
+    this.synth.connect(this.lowPassFilter);
+    this.lowPassFilter.toDestination();
   }
 
-  adjustSynthParams(filterFreq, resonance, distortion) {
+  adjustSynthParams() {
     if (this.synth && this.synth.filter && this.synth.filter.frequency) {
-      this.synth.oscillator.type = this.randomOscillatorType(); // Reset oscillator type
-      this.synth.filter.frequency.value = filterFreq;
-      this.synth.filter.Q.value = resonance;
-      this.synth.distortion = distortion;
+      const oscillatorType = this.randomOscillatorType();
+
+      this.synth.oscillator.type = oscillatorType;
+
+      // Adjust filter settings based on oscillator type
+      if (oscillatorType === 'sawtooth' || oscillatorType === 'square') {
+        // Cut off higher frequencies for sawtooth and square waveforms
+        this.synth.filter.frequency.value = this.params.filterFreq / 2;
+      } else {
+        // For other waveforms, use the original filter frequency
+        this.synth.filter.frequency.value = this.params.filterFreq;
+      }
+
+      this.synth.filter.Q.value = this.params.resonance;
+      this.synth.distortion = this.params.distortion;
+      this.synth.volume.sensitivity = this.params.volumeSensitivity;
+      this.synth.portamento = this.params.portamento;
+      this.synth.modulationIndex = this.params.modulationIndex;
+      this.synth.harmonicity = this.params.harmonicity;
     }
   }
 
   // Function to generate a random oscillator type
   randomOscillatorType() {
-    const oscillatorTypes = ["sine", "triangle"];
+    const oscillatorTypes = ["triangle", "sine", "sawtooth", "square"];
     return oscillatorTypes[Math.floor(Math.random() * oscillatorTypes.length)];
   }
+}
+
+// Create an instance of the Bass class
+const bass = new Bass(globalControls.volumes.bass, `${globalControls.globalKey}1`);
+
+// Bass pattern
+const bassPattern = new Tone.Pattern((time, note) => {
+  if (note !== null) {
+    // Adjust synth parameters for more variety
+    bass.adjustSynthParams();
+    bass.triggerAttackRelease(time);
+  }
+}, generateRandomBassPattern()).start("16n");
+
+// Function to generate a more interesting and groovy bass pattern
+function generateRandomBassPattern() {
+  const patternLength = globalControls.patternLength * 4;
+  const randomBassPattern = [];
+
+  for (let i = 0; i < patternLength; i++) {
+    const shouldPlayBass = Math.random() < 0.7;
+
+    if (shouldPlayBass) {
+      const noteLengths = ["1n", "2n", "4n", "8n", "16n"];
+      const randomNoteLength = noteLengths[Math.floor(Math.random() * noteLengths.length)];
+
+      const pitchVariation = Math.floor(Math.random() * 5) - 2;
+      const pitch = `${globalControls.globalKey}${pitchVariation}`;
+
+      const timingVariation = (Math.random() * 1 - 0.5) + "n";
+
+      randomBassPattern.push(`${pitch}${randomNoteLength}${timingVariation}`);
+    } else {
+      randomBassPattern.push(null);
+    }
+  }
+
+  return randomBassPattern;
 }
