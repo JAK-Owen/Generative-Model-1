@@ -1,5 +1,5 @@
 class Bass {
-  constructor(volume) {
+  constructor(volume, key) {
     this.params = this.generateTechnoBassParams();
     this.synth = new Tone.MembraneSynth({
       ...this.params,
@@ -29,7 +29,6 @@ class Bass {
   }
 
   triggerAttackRelease(time) {
-    // Trigger attack release with specific note and duration
     const note = Tone.Frequency(this.params.pitch.min, "midi").toNote();
     this.synth.triggerAttackRelease(note, "8n", time);
   }
@@ -44,13 +43,21 @@ class Bass {
   }
 
   updateGlobalControls(newControls) {
-    this.synth.dispose(); // Dispose the existing synth
+    this.synth.dispose();
     Object.assign(globalControls, newControls);
     this.params = this.generateTechnoBassParams();
-    // Recreate the synth with updated parameters, including the globalKey
     this.synth = new Tone.MembraneSynth({
       ...this.params,
       volume: globalControls.volumes.bass,
     }).toDestination();
+  }
+
+  adjustSynthParams(filterFreq, resonance, distortion) {
+    if (this.synth && this.synth.filter && this.synth.filter.frequency) {
+      this.synth.oscillator.type = "triangle"; // Reset oscillator type
+      this.synth.filter.frequency.value = filterFreq;
+      this.synth.filter.Q.value = resonance;
+      this.synth.distortion = distortion;
+    }
   }
 }

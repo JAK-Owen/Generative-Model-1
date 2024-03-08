@@ -1,36 +1,33 @@
-// app.js
-
 document.addEventListener("DOMContentLoaded", function () {
   let isAudioStarted = false;
   let bassLoopCount = 0;
-  const maxBassLoops = 4; // Adjust the maximum number of bass loops
+  const maxBassLoops = 4;
 
   // Initialize Tone.js
   Tone.start();
 
-  // Create instances of kick, hi-hat, and snare etc.
+  // Create instances of kick, hi-hat, snare, and bass
   const kick = new Kick(
     globalControls.volumes.kick,
-    `${globalControls.globalKey}1` // Use only the global key
+    `${globalControls.globalKey}1`
   );
   const hiHat = new HiHat(
     globalControls.volumes.hiHat,
-    `${globalControls.globalKey}1` // Use only the global key
+    `${globalControls.globalKey}1`
   );
   const snare = new Snare(
     globalControls.volumes.snare,
-    `${globalControls.globalKey}1` // Use only the global key
+    `${globalControls.globalKey}1`
   );
 
   const bass = new Bass(
     globalControls.volumes.bass,
-    `${globalControls.globalKey}1` // Use only the global key
+    `${globalControls.globalKey}1`
   );
 
   // Drum beat pattern
   const kickPattern = new Tone.Pattern((time, note) => {
     if (note !== null) {
-      // Trigger kick attack/release
       kick.triggerAttackRelease(time);
     }
   }, [`${globalControls.globalKey}1`]).start(0);
@@ -47,30 +44,50 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }, [null, `${globalControls.globalKey}1`]).start(0);
 
-  // Bass pattern
-  const bassPattern = new Tone.Pattern((time, note) => {
-    if (note !== null) {
-      bass.triggerAttackRelease(time);
-    }
-  }, generateRandomBassPattern()).start("8n");
-
-  // Function to generate a random bass pattern
-  function generateRandomBassPattern() {
-    const patternLength = globalControls.patternLength;
-    const randomBassPattern = [];
-
-    for (let i = 0; i < patternLength; i++) {
-      const shouldPlayBass = Math.random() < 0.7; // Adjust the probability
-      randomBassPattern.push(shouldPlayBass ? `${globalControls.globalKey}1` : null);
-    }
-
-    return randomBassPattern;
+// Bass pattern
+const bassPattern = new Tone.Pattern((time, note) => {
+  if (note !== null) {
+    bass.triggerAttackRelease(time);
   }
+}, generateGroovyBassPattern()).start("16n");
+
+// Function to generate a more interesting and groovy bass pattern
+function generateGroovyBassPattern() {
+  const patternLength = globalControls.patternLength * 4;
+  const randomBassPattern = [];
+
+  for (let i = 0; i < patternLength; i++) {
+    const shouldPlayBass = Math.random() < 0.7;
+
+    if (shouldPlayBass) {
+      const noteLengths = ["1n", "2n", "4n", "8n", "16n"];
+      const randomNoteLength = noteLengths[Math.floor(Math.random() * noteLengths.length)];
+
+      const pitchVariation = Math.floor(Math.random() * 5) - 2;
+      const pitch = `${globalControls.globalKey}${pitchVariation}`;
+
+      const timingVariation = (Math.random() * 1 - 0.5) + "n";
+
+      // Adjust filter, resonance, and distortion for each note
+      const filterFreq = Math.random() * 5000 + 500;
+      const resonance = Math.random() * 10 + 1;
+      const distortion = Math.random() * 0.8;
+
+      bass.adjustSynthParams(filterFreq, resonance, distortion);
+
+      randomBassPattern.push(`${pitch}${randomNoteLength}${timingVariation}`);
+    } else {
+      randomBassPattern.push(null);
+    }
+  }
+
+  return randomBassPattern;
+}
+
 
   // Main loop to control the number of bass loops
   Tone.Transport.scheduleRepeat((time) => {
     if (bassLoopCount < maxBassLoops) {
-      // Trigger the bass loop
       bassPattern.index = 0; // Reset the bass pattern index
       bassLoopCount++;
     }
@@ -98,24 +115,12 @@ document.addEventListener("DOMContentLoaded", function () {
   // Use Tone.Transport.start() to ensure consistent initialization
   Tone.Transport.start();
 
-  // Refresh event to create a new kick drum synth with random parameters on each page reload
+  // Refresh event to create new drum and bass synths with random parameters on each page reload
   window.addEventListener("beforeunload", () => {
-    kick.createNewKick(
-      globalControls.volumes.kick,
-      `${globalControls.globalKey}1`
-    );
-    hiHat.createNewHiHat(
-      globalControls.volumes.hiHat,
-      `${globalControls.globalKey}1`
-    );
-    snare.createNewSnare(
-      globalControls.volumes.snare,
-      `${globalControls.globalKey}1`
-    );
-    bass.createNewBass(
-      globalControls.volumes.bass,
-      `${globalControls.globalKey}1`
-    );
+    kick.createNewKick(globalControls.volumes.kick, `${globalControls.globalKey}1`);
+    hiHat.createNewHiHat(globalControls.volumes.hiHat, `${globalControls.globalKey}1`);
+    snare.createNewSnare(globalControls.volumes.snare, `${globalControls.globalKey}1`);
+    bass.createNewTechnoBass(globalControls.volumes.bass, `${globalControls.globalKey}1`);
     bassLoopCount = 0; // Reset the bass loop count on refresh
   });
 });

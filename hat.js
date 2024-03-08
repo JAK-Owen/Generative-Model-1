@@ -1,23 +1,32 @@
+// hat.js
+
 class HiHat {
   constructor() {
     // Initialize with default parameters
     this.setRandomHatParameters();
+    this.volume = globalControls.volumes.hiHat;
+    this.globalKey = globalControls.globalKey;
+
+    // Connect to globalControls
+    window.updateHatVolume = this.updateVolume.bind(this);
+    window.updateHatControls = this.updateGlobalControls.bind(this);
+
+    // Set initial volume using the updateVolume function
+    this.updateVolume();
   }
 
   // Function to set random hi-hat parameters
   setRandomHatParameters() {
-    const frequency = this.randomInRange(8000, 12000); // Frequency between 8 kHz and 12 kHz
+    const frequency = this.randomInRange(8000, 12000);
     const decay = this.randomInRange(0.01, 0.1);
     const attack = this.randomInRange(0.001, 0.005);
 
-    // Ensure envelope parameters are not null or undefined
     const envelope = {
       attack: attack || 0.001,
       decay: decay || 0.01,
       release: 0.02,
     };
 
-    // Create a new MetalSynth instance with random parameters
     this.synth = new Tone.MetalSynth({
       frequency: frequency,
       envelope: envelope,
@@ -25,7 +34,10 @@ class HiHat {
       modulationIndex: 16,
       resonance: 4000,
       octaves: 1.5,
+      // Do not set volume here
     }).toDestination();
+
+    this.synth.pitch = this.randomInRange(-12, 12);
   }
 
   // Function to trigger attack and release of the hi-hat
@@ -36,6 +48,20 @@ class HiHat {
   // Function to generate a random number within a specified range
   randomInRange(min, max) {
     return Math.random() * (max - min) + min;
+  }
+
+  // Function to update volume based on global controls
+  updateVolume() {
+    this.synth.volume.value = this.volume;
+  }
+
+  // Function to update global controls
+  updateGlobalControls(newControls) {
+    this.synth.dispose();
+    Object.assign(this, newControls);
+    this.setRandomHatParameters();
+    this.updateVolume();
+    this.synth.toDestination();
   }
 }
 
@@ -48,3 +74,6 @@ const hiHatPattern = new Tone.Pattern((time, note) => {
     hiHat.triggerAttackRelease(time);
   }
 }, ["C2"]).start("8n");
+
+// Export the hiHat instance for use in other files
+window.hiHat = hiHat;

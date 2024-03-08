@@ -1,3 +1,5 @@
+// snare.js
+
 class Snare {
   constructor() {
     // Initialize with default parameters
@@ -46,6 +48,18 @@ class Snare {
   randomInRange(min, max) {
     return Math.random() * (max - min) + min;
   }
+
+  // Function to update global controls
+  updateGlobalControls(newControls) {
+    this.synth.dispose();
+    Object.assign(this, newControls);
+    this.setRandomSnareParameters();
+    this.synth = new Tone.NoiseSynth({
+      envelope: this.synth.envelope,
+      filter: this.synth.filter,
+      filterEnvelope: this.synth.filterEnvelope,
+    }).toDestination();
+  }
 }
 
 // Create an instance of the Snare class
@@ -57,3 +71,6 @@ const snarePattern = new Tone.Pattern((time, note) => {
     snare.triggerAttackRelease(time);
   }
 }, [null, "C2"]).start(0);
+
+// Export the snare instance for use in other files
+window.snare = snare;
