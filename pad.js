@@ -2,9 +2,16 @@ class Pad {
     constructor(volume, globalKey) {
       this.effectRack = new Tone.Filter({
         type: 'lowpass',
-        frequency: 2000,
+        frequency: 4000,
         rolloff: -12,
       }).toDestination();
+  
+      // Add a high-pass filter to the effectRack
+      const highPassFilter = new Tone.Filter({
+        type: 'highpass',
+        frequency: 400, // Brick wall at 300 Hz
+        rolloff: -12,
+      });
   
       const reverb = new Tone.Reverb({
         decay: 5,
@@ -22,7 +29,7 @@ class Pad {
         depth: 0.1,
       }).toDestination();
   
-      this.effectRack.chain(reverb, delay, modulation);
+      this.effectRack.chain(highPassFilter, reverb, delay, modulation);
   
       this.synth = new Tone.PolySynth().connect(this.effectRack);
       this.synth.volume.value = volume + globalControls.volumes.pad;
