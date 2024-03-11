@@ -7,13 +7,14 @@ const globalControls = {
     snare: -10,
     hiHat: -9,
     bass: -6,
+    pad: -12, // Add pad volume control
   },
   globalKey: "G",
   bpm: 128,
-  patternLength: 1, 
+  patternLength: 1,
 };
 
-// Function to update gobal controls
+// Function to update global controls
 function updateGlobalControls(newControls) {
   Object.assign(globalControls, newControls);
 }
