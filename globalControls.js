@@ -8,7 +8,7 @@ const globalControls = {
     hiHat: -9,
     bass: -6,
   },
-  globalKey: "F",
+  globalKey: "G",
   bpm: 128,
   patternLength: 1, 
 };

@@ -8,7 +8,7 @@ class Bass {
       volume: volume + globalControls.volumes.bass,
       polyphony: 1,
     });
-
+ 
     // Add a low-pass filter with a cutoff frequency of 50Hz
     this.lowPassFilter = new Tone.Filter({
       type: 'lowpass',
@@ -141,9 +141,7 @@ function generateRandomBassPattern() {
       const pitchVariation = Math.floor(Math.random() * 5) - 2;
       const pitch = `${globalControls.globalKey}${pitchVariation}`;
 
-      const timingVariation = (Math.random() * 1 - 0.5) + "n";
-
-      randomBassPattern.push(`${pitch}${randomNoteLength}${timingVariation}`);
+      randomBassPattern.push(`${pitch}${randomNoteLength}`);
     } else {
       randomBassPattern.push(null);
     }
