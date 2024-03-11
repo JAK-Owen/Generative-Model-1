@@ -25,26 +25,26 @@ class Bass {
     const maxPitch = Tone.Frequency(`${globalControls.globalKey}3`).toMidi();
 
     return {
-      pitchDecay: Math.random() * 0.02 + 0.005,
+      // pitchDecay: Math.random() * 0.02 + 0.005,
       octaves: Math.floor(Math.random() * 2) + 3,
       oscillator: { type: this.randomOscillatorType() },
       envelope: {
-        attack: Math.random() * 0.05 + 0.1,
-        decay: Math.random() * 0.2 + 0.2,
-        sustain: Math.random() * 0.3 + 0.4,
-        release: Math.random() * 0.2 + 0.1,
+        attack: Math.random() * 0.2 + 1,
+        decay: Math.random() * 0.2 + 1,
+        sustain: 0,
+        release: 0,
       },
       pitch: {
         min: minPitch,
         max: maxPitch,
       },
-      filterFreq: Math.random() * 800 + 200,
-      resonance: Math.random() * 5 + 1,
-      distortion: Math.random() * 0.02,  // Reduced distortion for a cleaner sound
-      volumeSensitivity: Math.random() * 0.5 + 0.5,
-      portamento: Math.random() * 0.2,
-      modulationIndex: Math.random() * 30 + 1,
-      harmonicity: Math.random() * 5,
+      // filterFreq: Math.random() * 800 + 200,
+      // resonance: Math.random() * 5 + 1,
+      // distortion: Math.random() * 0.02,  
+      // volumeSensitivity: Math.random() * 0.5 + 0.5,
+      // portamento: Math.random() * 0.2,
+      // modulationIndex: Math.random() * 30 + 1,
+      // harmonicity: Math.random() * 5,
       polyphony: 1,
     };
   }
@@ -92,18 +92,18 @@ class Bass {
       // Adjust filter settings based on oscillator type
       if (oscillatorType === 'sawtooth' || oscillatorType === 'square') {
         // Cut off higher frequencies for sawtooth and square waveforms
-        this.synth.filter.frequency.value = this.params.filterFreq / 2;
+        this.synth.filter.frequency.value = this.params.filterFreq / 50;
       } else {
         // For other waveforms, use the original filter frequency
         this.synth.filter.frequency.value = this.params.filterFreq;
       }
 
-      this.synth.filter.Q.value = this.params.resonance;
-      this.synth.distortion = this.params.distortion;
-      this.synth.volume.sensitivity = this.params.volumeSensitivity;
-      this.synth.portamento = this.params.portamento;
-      this.synth.modulationIndex = this.params.modulationIndex;
-      this.synth.harmonicity = this.params.harmonicity;
+      // this.synth.filter.Q.value = this.params.resonance;
+      // this.synth.distortion = this.params.distortion;
+      // this.synth.volume.sensitivity = this.params.volumeSensitivity;
+      // this.synth.portamento = this.params.portamento;
+      // this.synth.modulationIndex = this.params.modulationIndex;
+      // this.synth.harmonicity = this.params.harmonicity;
     }
   }
 

@@ -3,14 +3,14 @@
 // Global control parameters
 const globalControls = {
   volumes: {
-    kick: -1,
-    snare: -5,
-    hiHat: -3,
-    bass: -1,
+    kick: -6,
+    snare: -10,
+    hiHat: -9,
+    bass: -6,
   },
   globalKey: "F",
   bpm: 128,
-  patternLength: 2, 
+  patternLength: 1, 
 };
 
 // Function to update gobal controls
