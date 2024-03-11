@@ -3,26 +3,20 @@
 class Pad {
     constructor(volume, globalKey) {
       this.synth = new Tone.PolySynth().toDestination();
-      // Check if globalControls.volumes.pad is a valid number before using it
-      this.synth.volume.value = typeof globalControls.volumes.pad === 'number' ? volume + globalControls.volumes.pad : volume;
+      this.synth.volume.value = volume + globalControls.volumes.pad;
       this.globalKey = globalKey;
+      this.note = [this.globalKey + "2", this.globalKey + "3", this.globalKey + "4"];
     }
   
     playConstantMinorChord() {
-      const minorChord = [
-        this.globalKey + "2",
-        this.globalKey + "3",
-        this.globalKey + "4",
-      ];
-  
       // Check if note is not null before triggering attack and release
-      if (minorChord.every(note => note !== null)) {
-        this.triggerAttackRelease(minorChord, "4n");
+      if (this.note.every(note => note !== null)) {
+        this.synth.triggerAttack(this.note);
       }
     }
   
-    triggerAttackRelease(notes, duration) {
-      this.synth.triggerAttackRelease(notes, duration);
+    stopPad() {
+      this.synth.triggerRelease(this.note);
     }
   
     initialize() {
@@ -33,8 +27,7 @@ class Pad {
     createNewRandomPad() {
       this.synth.dispose();
       this.synth = new Tone.PolySynth().toDestination();
-      // Check if globalControls.volumes.pad is a valid number before using it
-      this.synth.volume.value = typeof globalControls.volumes.pad === 'number' ? globalControls.volumes.pad : 0;
+      this.synth.volume.value = globalControls.volumes.pad;
       this.playConstantMinorChord();
     }
   
@@ -42,8 +35,7 @@ class Pad {
       this.synth.dispose();
       Object.assign(globalControls, newControls);
       this.synth = new Tone.PolySynth().toDestination();
-      // Check if globalControls.volumes.pad is a valid number before using it
-      this.synth.volume.value = typeof globalControls.volumes.pad === 'number' ? globalControls.volumes.pad : 0;
+      this.synth.volume.value = globalControls.volumes.pad;
       this.playConstantMinorChord();
     }
   
@@ -58,6 +50,12 @@ class Pad {
   // Initialize the pad when the document is fully loaded
   document.addEventListener("DOMContentLoaded", () => {
     pad.initialize();
+  });
+  
+  // Stop the pad when the stop button is pressed
+  const stopBtn = document.getElementById("stopBtn");
+  stopBtn.addEventListener("click", () => {
+    pad.stopPad();
   });
   
   // Export the pad instance for use in other files

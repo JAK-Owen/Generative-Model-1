@@ -111,7 +111,8 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   stopBtn.addEventListener("click", () => {
-    Tone.Transport.stop();
+    pad.stopPad(); // Call the stopPad method of the pad instance
+    Tone.Transport.stop(); // Stop the Tone.Transport to ensure all sounds are stopped
   });
 
   // Use Tone.Transport.start() to ensure consistent initialization

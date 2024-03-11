@@ -7,9 +7,9 @@ const globalControls = {
     snare: -10,
     hiHat: -9,
     bass: -6,
-    pad: -12, // Add pad volume control
+    pad: -10, // Add pad volume control
   },
-  globalKey: "G",
+  globalKey: "F",
   bpm: 128,
   patternLength: 1,
 };
