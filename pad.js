@@ -2,38 +2,38 @@ class Pad {
     constructor(volume, globalKey) {
         this.effectRack = new Tone.Filter({
             type: 'lowpass',
-            frequency: 400,
+            frequency: this.randomizeParameter(200, 800),
             rolloff: -12,
         }).toDestination();
 
         const highPassFilter = new Tone.Filter({
             type: 'highpass',
-            frequency: 300,
+            frequency: this.randomizeParameter(100, 500),
             rolloff: -12,
         });
 
         const chorus = new Tone.Chorus({
             voices: 16,
-            depth: 0.5,
-            frequency: 4,
+            depth: this.randomizeParameter(0.3, 0.7),
+            frequency: this.randomizeParameter(2, 8),
             delayTime: {
-                '4n': 1.953,
-                '8n': 7.812,
+                '4n': this.randomizeParameter(1, 3),
+                '8n': this.randomizeParameter(4, 15),
             },
-            feedback: 0.4,
+            feedback: this.randomizeParameter(0.2, 0.6),
             spread: 1,
         }).toDestination();
 
         const delay = new Tone.PingPongDelay({
-            delayTime: '8n.',
-            feedback: 0.5,
-            wet: 0.33,
+            delayTime: this.randomizeParameter(0.05, 0.2),
+            feedback: this.randomizeParameter(0.3, 0.7),
+            wet: this.randomizeParameter(0.2, 0.5),
             spread: 1,
         }).toDestination();
 
         const reverb = new Tone.JCReverb({
-            preDelay: 0.01,
-            roomSize: 0.78,
+            preDelay: this.randomizeParameter(0.005, 0.02),
+            roomSize: this.randomizeParameter(0.5, 0.9),
             wet: 1,
         }).toDestination();
 
@@ -77,7 +77,7 @@ class Pad {
             },
             filter: {
                 type: 'lowpass',
-                frequency: Math.random() * 500 + 200,
+                frequency: this.randomizeParameter(200, 800),
                 rolloff: -12,
             },
             octave,
@@ -142,6 +142,10 @@ class Pad {
         }, automationTime);
 
         Tone.Transport.start();
+    }
+
+    randomizeParameter(min, max) {
+        return Math.random() * (max - min) + min;
     }
 }
 
