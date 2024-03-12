@@ -14,21 +14,16 @@ class Pad {
 
         const reverb = new Tone.Reverb({
             decay: Math.random() * 10 + 1,
-            wet: Math.random(),
+            wet: 0.9,
         }).toDestination();
 
         const delay = new Tone.FeedbackDelay({
+            wet: 0.5,
             delayTime: Math.random() * 0.5 + 0.1,
             feedback: Math.random() * 0.5,
         }).toDestination();
 
-        const modulation = new Tone.Vibrato({
-            maxDelay: Math.random() * 0.005 + 0.001,
-            frequency: Math.random() * 0.1 + 1,
-            depth: Math.random(),
-        }).toDestination();
-
-        this.effectRack.chain(highPassFilter, reverb, delay, modulation);
+        this.effectRack.chain(highPassFilter, reverb, delay);
 
         this.synth = new Tone.PolySynth().connect(this.effectRack);
         this.synth.volume.value = volume + globalControls.volumes.pad;
@@ -57,12 +52,12 @@ class Pad {
     }
 
     generateRandomPadParams() {
-        const octave = 3;
+        const octave = 2;
 
         return {
             oscillator: {
                 type: this.randomOscillatorType(),
-                modulationType: 'sine',
+                Type: 'sine',
                 harmonicity: Math.random() * 3 + 1,
                 detune: Math.random() * 10 - 5,
             },
@@ -115,7 +110,7 @@ class Pad {
         // Create an LFO for the filter frequency
         this.lfo = new Tone.LFO({
             type: 'sine',
-            frequency: 0.01, // Keep a low frequency for slow modulation
+            frequency: 0.01, // Keep a low frequency for slow 
             min: 400, // Set the minimum frequency (closed position)
             max: 2000, // Set the maximum frequency (open position)
             phase: 180, // Start the LFO in the middle to go up and then down
@@ -131,14 +126,19 @@ class Pad {
 
         // Schedule the LFO changes to repeat using Tone.Transport.scheduleRepeat
         Tone.Transport.scheduleRepeat((time) => {
-            // Start the LFO at the specified time
-            this.lfo.start(time);
+            // Check if LFO is already started
+            if (!this.lfo.state.startsWith("started")) {
+                this.lfo.start(time);
+            }
 
             // Linearly ramp up the LFO frequency over the first half of the automation time
             this.lfo.frequency.rampTo(2000, time + automationTime / 2);
 
-            // Stop the LFO after the first half of the automation time
-            this.lfo.stop(time + automationTime / 2);
+            // Check if LFO is not already stopped
+            if (!this.lfo.state.startsWith("stopped")) {
+                // Stop the LFO after the first half of the automation time
+                this.lfo.stop(time + automationTime / 2);
+            }
 
             // Linearly ramp down the LFO frequency over the second half of the automation time
             this.lfo.frequency.rampTo(400, time + automationTime);
