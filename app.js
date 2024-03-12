@@ -1,3 +1,5 @@
+// app.js
+
 document.addEventListener("DOMContentLoaded", function () {
   let isAudioStarted = false;
   let bassLoopCount = 0;
@@ -7,16 +9,10 @@ document.addEventListener("DOMContentLoaded", function () {
   Tone.start();
 
   // Create instances of kick, hi-hat, snare, bass, and pad
-  const kick = new Kick(
-    globalControls.volumes.kick,
-    `${globalControls.globalKey}1`
-  );
+  const kick = new Kick(globalControls.volumes.kick);
   const hiHat = new HiHat();
   const snare = new Snare();
-  const bass = new Bass(
-    globalControls.volumes.bass,
-    `${globalControls.globalKey}1`
-  );
+  const bass = new Bass(globalControls.volumes.bass, globalControls.globalKey);
 
   // Drum beat patterns
   const kickPattern = new Tone.Pattern((time, note) => {
@@ -40,58 +36,40 @@ document.addEventListener("DOMContentLoaded", function () {
   // Bass pattern
   const bassPattern = new Tone.Pattern((time, note) => {
     if (note !== null) {
+      bass.adjustSynthParams();
       bass.triggerAttackRelease(time);
     }
   }, generateRandomBassPattern()).start("16n");
 
   // Pad instance
-  const pad = new Pad(
-    globalControls.volumes.pad,
-    globalControls.globalKey
-  );
+  const pad = new Pad(globalControls.volumes.pad, globalControls.globalKey);
 
-  // Start playing the constant minor chord
-  pad.initialize();
+  // Start and stop button (toggle)
+  const toggleBtn = document.getElementById("toggleBtn");
 
-  // Main loop to control the number of bass loops
-  Tone.Transport.scheduleRepeat((time) => {
-    if (bassLoopCount < maxBassLoops) {
-      bassPattern.index = 0; // Reset the bass pattern index
-      bassLoopCount++;
-    }
-  }, "4n");
-
-  // Connect everything and set BPM
-  Tone.Transport.bpm.value = globalControls.bpm;
-
-  // Start and stop buttons
-  const startBtn = document.getElementById("startBtn");
-  const stopBtn = document.getElementById("stopBtn");
-
-  startBtn.addEventListener("click", () => {
+  toggleBtn.addEventListener("click", () => {
     if (!isAudioStarted) {
       Tone.start();
       isAudioStarted = true;
+      Tone.Transport.start();
+      pad.initialize();
+      toggleBtn.textContent = "Stop";
+    } else {
+      pad.stopPad();
+      Tone.Transport.stop();
+      isAudioStarted = false;
+      toggleBtn.textContent = "Play";
     }
-    Tone.Transport.start();
   });
-
-  stopBtn.addEventListener("click", () => {
-    pad.stopPad(); // Call the stopPad method of the pad instance
-    Tone.Transport.stop(); // Stop the Tone.Transport to ensure all sounds are stopped
-  });
-
-  // Use Tone.Transport.start() to ensure consistent initialization
-  Tone.Transport.start();
 
   // Refresh event to create new drum and bass synths with random parameters on each page reload
   window.addEventListener("beforeunload", () => {
-    kick.createNewKick(globalControls.volumes.kick, `${globalControls.globalKey}1`);
-    hiHat.createNewHiHat();
-    snare.createNewSnare();
-    bass.createNewRandomBass(globalControls.volumes.bass, `${globalControls.globalKey}1`);
+    kick.createNewKick(globalControls.volumes.kick);
+    hiHat.setRandomHatParameters();
+    snare.setRandomSnareParameters();
+    bass.createNewRandomBass(globalControls.volumes.bass, globalControls.globalKey);
     pad.createNewRandomPad();
-    bassLoopCount = 0; // Reset the bass loop count on refresh
+    bassLoopCount = 0;
   });
 
   // Export the pad instance for use in other files
