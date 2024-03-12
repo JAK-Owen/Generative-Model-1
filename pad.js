@@ -110,43 +110,34 @@ class Pad {
         // Create an LFO for the filter frequency
         this.lfo = new Tone.LFO({
             type: 'sine',
-            frequency: 0.01, // Keep a low frequency for slow 
-            min: 400, // Set the minimum frequency (closed position)
-            max: 2000, // Set the maximum frequency (open position)
+            frequency: 0.01, // Keep a low frequency for slow modulation
+            min: 400, // Minimum filter frequency (closed position)
+            max: 2000, // Maximum filter frequency (open position)
             phase: 180, // Start the LFO in the middle to go up and then down
-        }).start().connect(this.effectRack.frequency);
+        }).start();
+        
+        // Connect the LFO to the filter frequency
+        this.lfo.connect(this.effectRack.frequency);
     }
 
     automateParameterChanges() {
         const automationTime = 60;
-
-        // Set the LFO to start at the minimum frequency and go to the maximum
-        this.lfo.min = 400;
-        this.lfo.max = 2000;
-
-        // Schedule the LFO changes to repeat using Tone.Transport.scheduleRepeat
+    
+        // Schedule the filter frequency changes to repeat using Tone.Transport.scheduleRepeat
         Tone.Transport.scheduleRepeat((time) => {
-            // Check if LFO is already started
-            if (!this.lfo.state.startsWith("started")) {
-                this.lfo.start(time);
-            }
-
-            // Linearly ramp up the LFO frequency over the first half of the automation time
-            this.lfo.frequency.rampTo(2000, time + automationTime / 2);
-
-            // Check if LFO is not already stopped
-            if (!this.lfo.state.startsWith("stopped")) {
-                // Stop the LFO after the first half of the automation time
-                this.lfo.stop(time + automationTime / 2);
-            }
-
-            // Linearly ramp down the LFO frequency over the second half of the automation time
-            this.lfo.frequency.rampTo(400, time + automationTime);
+            // Ensure the time is in the future
+            const startTime = Math.max(time, Tone.now() + 0.01);
+    
+            // Schedule the linear ramp up and down for filter frequency
+            this.effectRack.frequency.setValueAtTime(400, startTime);
+            this.effectRack.frequency.linearRampToValueAtTime(2000, startTime + automationTime / 2);
+            this.effectRack.frequency.linearRampToValueAtTime(400, startTime + automationTime);
         }, automationTime);
-
+    
         // Start the Transport to trigger the scheduled changes
         Tone.Transport.start();
     }
+    
 }
 
 // Instantiate the Pad class
