@@ -87,7 +87,6 @@ class Pad {
       return {
         oscillator: {
           type: this.randomOscillatorType(),
-          Type: 'sine',
           harmonicity: Math.random() * 3 + 1,
           detune: Math.random() * 10 - 5,
         },
@@ -152,36 +151,29 @@ class Pad {
       // Create an LFO for the filter frequency
       this.lfo = new Tone.LFO({
         type: 'sine',
-        frequency: 0.01, // Keep a low frequency for slow
+        frequency: 0.01, // Set a slow fixed rate
         min: 400, // Set the minimum frequency (closed position)
         max: 2000, // Set the maximum frequency (open position)
         phase: 180, // Start the LFO in the middle to go up and then down
-      }).start().connect(this.effectRack.frequency);
+      }).start();
+  
+      // Connect the LFO to the filter frequency
+      this.lfo.connect(this.effectRack.frequency);
     }
   
     automateParameterChanges() {
         const automationTime = 60;
       
-        // Set the LFO to start at the minimum frequency and go to the maximum
-        this.lfo.min = 400;
-        this.lfo.max = 2000;
+        // Ensure the LFO is stopped before starting it again
+        this.lfo.stop();
       
-        // Create a Tone.Loop to handle LFO automation
-        const lfoLoop = new Tone.Loop((time) => {
-          // Ensure the LFO is stopped before starting it again
-          if (this.lfo.state !== 'started') {
-            this.lfo.start(time);
-          }
+        // Start the LFO at the beginning
+        this.lfo.start();
       
-          // Linearly ramp up the LFO frequency over the first half of the automation time
-          this.lfo.frequency.rampTo(2000, time + automationTime / 2);
-      
-          // Stop the LFO after the first half of the automation time
-          this.lfo.stop(time + automationTime / 2);
-      
-          // Linearly ramp down the LFO frequency over the second half of the automation time
-          this.lfo.frequency.rampTo(400, time + automationTime);
-        }, automationTime).start(0);
+        // Schedule a stop event after the automation time
+        setTimeout(() => {
+          this.lfo.stop();
+        }, automationTime * 1000); // Convert automationTime to milliseconds
       
         // Start the Transport to trigger the scheduled changes
         Tone.Transport.start();
