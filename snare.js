@@ -1,5 +1,3 @@
-// snare.js
-
 class Snare {
   constructor() {
     // Initialize with default parameters

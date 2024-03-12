@@ -1,18 +1,14 @@
-// hat.js
-
 class HiHat {
   constructor() {
     // Initialize with default parameters
     this.setRandomHatParameters();
     this.volume = globalControls.volumes.hiHat;
     this.globalKey = globalControls.globalKey;
+    this.updateVolume(); // Set initial volume using the updateVolume function
 
     // Connect to globalControls
     window.updateHatVolume = this.updateVolume.bind(this);
     window.updateHatControls = this.updateGlobalControls.bind(this);
-
-    // Set initial volume using the updateVolume function
-    this.updateVolume();
   }
 
   // Function to set random hi-hat parameters
@@ -38,7 +34,6 @@ class HiHat {
       modulationIndex: modulationIndex,
       resonance: resonance,
       octaves: octaves,
-      // Do not set volume here
     }).toDestination();
 
     this.synth.pitch = this.randomInRange(-12, 12);
@@ -65,7 +60,6 @@ class HiHat {
     Object.assign(this, newControls);
     this.setRandomHatParameters();
     this.updateVolume();
-    this.synth.toDestination();
   }
 }
 
