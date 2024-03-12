@@ -151,10 +151,10 @@ class Pad {
       // Create an LFO for the filter frequency
       this.lfo = new Tone.LFO({
         type: 'sine',
-        frequency: 0.01, // Set a slow fixed rate
+        frequency: Math.random() * 0.05 + 0.01, // Randomize frequency for each instance
         min: 400, // Set the minimum frequency (closed position)
         max: 2000, // Set the maximum frequency (open position)
-        phase: 180, // Start the LFO in the middle to go up and then down
+        phase: Math.random() * 360, // Randomize phase
       }).start();
   
       // Connect the LFO to the filter frequency
@@ -162,29 +162,34 @@ class Pad {
     }
   
     automateParameterChanges() {
-        const automationTime = 60;
-      
-        // Ensure the LFO is stopped before starting it again
+      const automationTime = 60;
+  
+      // Ensure the LFO is stopped before starting it again
+      this.lfo.stop();
+  
+      // Start the LFO at a random phase
+      this.lfo.phase = Math.random() * 360;
+  
+      // Start the LFO
+      this.lfo.start();
+  
+      // Schedule a stop event after the automation time
+      setTimeout(() => {
         this.lfo.stop();
-      
-        // Start the LFO at the beginning
-        this.lfo.start();
-      
-        // Schedule a stop event after the automation time
-        setTimeout(() => {
-          this.lfo.stop();
-        }, automationTime * 1000); // Convert automationTime to milliseconds
-      
-        // Start the Transport to trigger the scheduled changes
-        Tone.Transport.start();
-      }
-      
-      
+      }, automationTime * 1000); // Convert automationTime to milliseconds
+  
+      // Start the Transport to trigger the scheduled changes
+      Tone.Transport.start();
+    }
   }
   
   // Instantiate the Pad class
-  const pad = new Pad(globalControls.volumes.pad, globalControls.globalKey);
+  const pad1 = new Pad(globalControls.volumes.pad, globalControls.globalKey);
+  const pad2 = new Pad(globalControls.volumes.pad, globalControls.globalKey);
+  const pad3 = new Pad(globalControls.volumes.pad, globalControls.globalKey);
   
-  // Export the pad instance for use in other files
-  window.pad = pad;
+  // Export the pad instances for use in other files
+  window.pad1 = pad1;
+  window.pad2 = pad2;
+  window.pad3 = pad3;
   
