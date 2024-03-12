@@ -1,5 +1,3 @@
-// bass.js
-
 class Bass {
   constructor(volume, key) {
     this.params = this.generateRandomBassParams();
@@ -84,32 +82,12 @@ class Bass {
   }
 
   adjustSynthParams() {
-    if (this.synth && this.synth.filter && this.synth.filter.frequency) {
-      const oscillatorType = this.randomOscillatorType();
-
-      this.synth.oscillator.type = oscillatorType;
-
-      // Adjust filter settings based on oscillator type
-      if (oscillatorType === 'sawtooth' || oscillatorType === 'square') {
-        // Cut off higher frequencies for sawtooth and square waveforms
-        this.synth.filter.frequency.value = this.params.filterFreq / 50;
-      } else {
-        // For other waveforms, use the original filter frequency
-        this.synth.filter.frequency.value = this.params.filterFreq;
-      }
-
-      // this.synth.filter.Q.value = this.params.resonance;
-      // this.synth.distortion = this.params.distortion;
-      // this.synth.volume.sensitivity = this.params.volumeSensitivity;
-      // this.synth.portamento = this.params.portamento;
-      // this.synth.modulationIndex = this.params.modulationIndex;
-      // this.synth.harmonicity = this.params.harmonicity;
-    }
+    // Add any specific adjustments you want for the bass synth
   }
 
   // Function to generate a random oscillator type
   randomOscillatorType() {
-    const oscillatorTypes = ["triangle", "sine", "sawtooth", "square"];
+    const oscillatorTypes = ['triangle', 'sine', 'sawtooth', 'square'];
     return oscillatorTypes[Math.floor(Math.random() * oscillatorTypes.length)];
   }
 }
@@ -124,7 +102,7 @@ const bassPattern = new Tone.Pattern((time, note) => {
     bass.adjustSynthParams();
     bass.triggerAttackRelease(time);
   }
-}, generateRandomBassPattern()).start("16n");
+}, generateRandomBassPattern()).start('16n');
 
 // Function to generate a more interesting and groovy bass pattern
 function generateRandomBassPattern() {
@@ -135,7 +113,7 @@ function generateRandomBassPattern() {
     const shouldPlayBass = Math.random() < 0.7;
 
     if (shouldPlayBass) {
-      const noteLengths = ["1n", "2n", "4n", "8n", "16n"];
+      const noteLengths = ['1n', '2n', '4n', '8n', '16n'];
       const randomNoteLength = noteLengths[Math.floor(Math.random() * noteLengths.length)];
 
       const pitchVariation = Math.floor(Math.random() * 5) - 2;
@@ -149,3 +127,6 @@ function generateRandomBassPattern() {
 
   return randomBassPattern;
 }
+
+// Export the Bass class
+window.bass = bass;
