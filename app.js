@@ -1,5 +1,3 @@
-// app.js
-
 document.addEventListener("DOMContentLoaded", function () {
   let isAudioStarted = false;
   let bassLoopCount = 0;
@@ -13,14 +11,8 @@ document.addEventListener("DOMContentLoaded", function () {
     globalControls.volumes.kick,
     `${globalControls.globalKey}1`
   );
-  const hiHat = new HiHat(
-    globalControls.volumes.hiHat,
-    `${globalControls.globalKey}1`
-  );
-  const snare = new Snare(
-    globalControls.volumes.snare,
-    `${globalControls.globalKey}1`
-  );
+  const hiHat = new HiHat();
+  const snare = new Snare();
   const bass = new Bass(
     globalControls.volumes.bass,
     `${globalControls.globalKey}1`
@@ -37,46 +29,20 @@ document.addEventListener("DOMContentLoaded", function () {
     if (note !== null) {
       hiHat.triggerAttackRelease(time);
     }
-  }, [`${globalControls.globalKey}1`]).start("8n");
+  }, ["C2"]).start("8n");
 
   const snarePattern = new Tone.Pattern((time, note) => {
     if (note !== null) {
       snare.triggerAttackRelease(time);
     }
-  }, [null, `${globalControls.globalKey}1`]).start(0);
+  }, [null, "C2"]).start(0);
 
   // Bass pattern
   const bassPattern = new Tone.Pattern((time, note) => {
     if (note !== null) {
-      // Adjust synth parameters for more variety
-      bass.adjustSynthParams();
       bass.triggerAttackRelease(time);
     }
   }, generateRandomBassPattern()).start("16n");
-
-  // Function to generate a more interesting and groovy bass pattern
-  function generateRandomBassPattern() {
-    const patternLength = globalControls.patternLength * 4;
-    const randomBassPattern = [];
-
-    for (let i = 0; i < patternLength; i++) {
-      const shouldPlayBass = Math.random() < 0.7;
-
-      if (shouldPlayBass) {
-        const noteLengths = ["1n", "2n", "4n", "8n", "16n"];
-        const randomNoteLength = noteLengths[Math.floor(Math.random() * noteLengths.length)];
-
-        const pitchVariation = Math.floor(Math.random() * 5) - 2;
-        const pitch = `${globalControls.globalKey}${pitchVariation}`;
-
-        randomBassPattern.push(`${pitch}${randomNoteLength}`);
-      } else {
-        randomBassPattern.push(null);
-      }
-    }
-
-    return randomBassPattern;
-  }
 
   // Pad instance
   const pad = new Pad(
@@ -121,8 +87,8 @@ document.addEventListener("DOMContentLoaded", function () {
   // Refresh event to create new drum and bass synths with random parameters on each page reload
   window.addEventListener("beforeunload", () => {
     kick.createNewKick(globalControls.volumes.kick, `${globalControls.globalKey}1`);
-    hiHat.createNewHiHat(globalControls.volumes.hiHat, `${globalControls.globalKey}1`);
-    snare.createNewSnare(globalControls.volumes.snare, `${globalControls.globalKey}1`);
+    hiHat.createNewHiHat();
+    snare.createNewSnare();
     bass.createNewRandomBass(globalControls.volumes.bass, `${globalControls.globalKey}1`);
     pad.createNewRandomPad();
     bassLoopCount = 0; // Reset the bass loop count on refresh
