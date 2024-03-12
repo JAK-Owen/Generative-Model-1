@@ -8,7 +8,7 @@ class Pad {
   
       const highPassFilter = new Tone.Filter({
         type: 'highpass',
-        frequency: 300,
+        frequency: 500,
         rolloff: -12,
       });
   
