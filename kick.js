@@ -1,5 +1,3 @@
-// kick.js
-
 class Kick {
   constructor(volume) {
     this.params = this.generateRandomKickParams();
@@ -31,7 +29,6 @@ class Kick {
   }
 
   triggerAttackRelease(time) {
-    // Trigger attack release with specific note and duration
     const note = Tone.Frequency(this.params.pitch.min, "midi").toNote();
     this.synth.triggerAttackRelease(note, "8n", time);
   }
@@ -45,9 +42,21 @@ class Kick {
     }).toDestination();
   }
 
-  // Function to generate a random oscillator type
   randomOscillatorType() {
     const oscillatorTypes = ["sine", "triangle"];
     return oscillatorTypes[Math.floor(Math.random() * oscillatorTypes.length)];
   }
 }
+
+// Create an instance of the Kick class
+const kick = new Kick(globalControls.volumes.kick);
+
+// Drum beat pattern for kick
+const kickPattern = new Tone.Pattern((time, note) => {
+  if (note !== null) {
+    kick.triggerAttackRelease(time);
+  }
+}, ["C1"]).start(0);
+
+// Export the kick instance for use in other files
+window.kick = kick;

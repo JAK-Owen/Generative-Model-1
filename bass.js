@@ -23,7 +23,6 @@ class Bass {
     const maxPitch = Tone.Frequency(`${globalControls.globalKey}3`).toMidi();
 
     return {
-      // pitchDecay: Math.random() * 0.02 + 0.005,
       octaves: Math.floor(Math.random() * 2) + 3,
       oscillator: { type: this.randomOscillatorType() },
       envelope: {
@@ -36,13 +35,6 @@ class Bass {
         min: minPitch,
         max: maxPitch,
       },
-      // filterFreq: Math.random() * 800 + 200,
-      // resonance: Math.random() * 5 + 1,
-      // distortion: Math.random() * 0.02,  
-      // volumeSensitivity: Math.random() * 0.5 + 0.5,
-      // portamento: Math.random() * 0.2,
-      // modulationIndex: Math.random() * 30 + 1,
-      // harmonicity: Math.random() * 5,
       polyphony: 1,
     };
   }
@@ -85,9 +77,8 @@ class Bass {
     // Add any specific adjustments you want for the bass synth
   }
 
-  // Function to generate a random oscillator type
   randomOscillatorType() {
-    const oscillatorTypes = ['triangle', 'sine', 'sawtooth', 'square'];
+    const oscillatorTypes = ["triangle", "sine", "sawtooth", "square"];
     return oscillatorTypes[Math.floor(Math.random() * oscillatorTypes.length)];
   }
 }
@@ -99,10 +90,9 @@ const bass = new Bass(globalControls.volumes.bass, `${globalControls.globalKey}1
 const bassPattern = new Tone.Pattern((time, note) => {
   if (note !== null) {
     // Adjust synth parameters for more variety
-    bass.adjustSynthParams();
     bass.triggerAttackRelease(time);
   }
-}, generateRandomBassPattern()).start('16n');
+}, generateRandomBassPattern()).start("16n");
 
 // Function to generate a more interesting and groovy bass pattern
 function generateRandomBassPattern() {
@@ -113,7 +103,7 @@ function generateRandomBassPattern() {
     const shouldPlayBass = Math.random() < 0.7;
 
     if (shouldPlayBass) {
-      const noteLengths = ['1n', '2n', '4n', '8n', '16n'];
+      const noteLengths = ["1n", "2n", "4n", "8n", "16n"];
       const randomNoteLength = noteLengths[Math.floor(Math.random() * noteLengths.length)];
 
       const pitchVariation = Math.floor(Math.random() * 5) - 2;
@@ -127,6 +117,3 @@ function generateRandomBassPattern() {
 
   return randomBassPattern;
 }
-
-// Export the Bass class
-window.bass = bass;

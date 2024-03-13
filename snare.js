@@ -15,27 +15,19 @@ class Snare {
   setRandomSnareParameters() {
     const attack = this.randomInRange(0.001, 0.01);
     const decay = this.randomInRange(0.01, 0.1);
-    const sustain = this.randomInRange(0.001, 0.01);
-    const release = this.randomInRange(0.001, 0.02);
-    const pitch = this.randomInRange(-12, 12);
-    const filterFrequency = this.randomInRange(1000, 5000); 
-    const filterQ = this.randomInRange(1, 5); 
-    const noiseType = Math.random() < 0.5 ? 'white' : 'pink'; // Randomly choose between white and pink noise
-    const modulationIndex = this.randomInRange(5, 20); 
 
     const envelope = {
       attack: attack || 0.001,
       decay: decay || 0.01,
-      sustain: sustain || 0,
-      release: release || 0.02,
+      release: 0.02,
     };
 
     this.synth = new Tone.NoiseSynth({
       envelope: envelope,
       filter: {
         type: 'lowpass',
-        frequency: filterFrequency,
-        Q: filterQ,
+        frequency: 3000,
+        Q: 5,
       },
       filterEnvelope: {
         attack: 0.001,
@@ -43,13 +35,9 @@ class Snare {
         sustain: 0,
       },
       noise: {
-        type: noiseType,
+        type: 'white',
       },
-      modulationIndex: modulationIndex,
-      // Do not set volume here
     }).toDestination();
-
-    this.synth.pitch = pitch;
   }
 
   // Function to trigger attack and release of the snare
@@ -78,7 +66,6 @@ class Snare {
       filter: this.synth.filter,
       filterEnvelope: this.synth.filterEnvelope,
       noise: this.synth.noise,
-      modulationIndex: this.synth.modulationIndex,
     }).toDestination();
   }
 }

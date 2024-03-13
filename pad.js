@@ -29,6 +29,7 @@ class Pad {
     this.synth.volume.value = volume + globalControls.volumes.pad;
     this.globalKey = globalKey;
     this.note = [this.globalKey + '2', this.globalKey + '3', this.globalKey + '4'];
+    this.params = this.generateRandomPadParams();
 
     this.synthUp = new Tone.PolySynth().connect(this.effectRack);
     this.synthUp.volume.value = volume + globalControls.volumes.pad;
@@ -38,16 +39,24 @@ class Pad {
     this.synthDown.volume.value = volume + globalControls.volumes.pad;
     this.noteDown = [this.globalKey + '1', this.globalKey + '2', this.globalKey + '3'];
 
-    this.setupSynthesizers();
-    this.playHarmony();
+    this.setupSynthesizer();
+    this.playConstantMinorChord();
     this.setupLFO();
     this.automateParameterChanges();
   }
 
-  playHarmony() {
-    this.synth.triggerAttack(this.note);
-    this.synthUp.triggerAttack(this.noteUp);
-    this.synthDown.triggerAttack(this.noteDown);
+  playConstantMinorChord() {
+    if (this.note.every((note) => note !== null)) {
+      this.synth.triggerAttack(this.note);
+    }
+
+    if (this.synthUp && this.noteUp.every((note) => note !== null)) {
+      this.synthUp.triggerAttack(this.noteUp);
+    }
+
+    if (this.synthDown && this.noteDown.every((note) => note !== null)) {
+      this.synthDown.triggerAttack(this.noteDown);
+    }
   }
 
   stopPad() {
@@ -57,37 +66,19 @@ class Pad {
   }
 
   initialize() {
-    this.playHarmony();
+    this.playConstantMinorChord();
+
+    if (this.synthUp) {
+      this.synthUp.triggerAttack(this.noteUp);
+    }
+
+    if (this.synthDown) {
+      this.synthDown.triggerAttack(this.noteDown);
+    }
+
+    // Adjust start times to avoid conflicts
     this.lfo.sync().start();
     this.automateParameterChanges();
-  }
-
-  setupSynthesizers() {
-    this.updateSynthParams();
-  }
-
-  createNewRandomPad() {
-    this.synth.dispose();
-    this.synth = new Tone.PolySynth().connect(this.effectRack);
-    this.synth.volume.value = globalControls.volumes.pad;
-
-    this.synthUp.dispose();
-    this.synthUp = new Tone.PolySynth().connect(this.effectRack);
-    this.synthUp.volume.value = globalControls.volumes.pad;
-
-    this.synthDown.dispose();
-    this.synthDown = new Tone.PolySynth().connect(this.effectRack);
-    this.synthDown.volume.value = globalControls.volumes.pad;
-
-    this.setupSynthesizers();
-    this.playHarmony();
-  }
-
-  updateSynthParams() {
-    const params = this.generateRandomPadParams();
-    this.synth.set(params);
-    this.synthUp.set(params);
-    this.synthDown.set(params);
   }
 
   generateRandomPadParams() {
@@ -108,36 +99,96 @@ class Pad {
     };
   }
 
+  updateSynthParams() {
+    this.synth.set(this.params);
+    this.synthUp.set(this.params);
+    this.synthDown.set(this.params);
+  }
+
+  setupSynthesizer() {
+    this.updateSynthParams();
+  }
+
+  createNewRandomPad() {
+    this.synth.dispose();
+    this.synth = new Tone.PolySynth().connect(this.effectRack);
+    this.synth.volume.value = globalControls.volumes.pad;
+    this.params = this.generateRandomPadParams();
+    this.setupSynthesizer();
+    this.playConstantMinorChord();
+  }
+
+  updateGlobalControls(newControls) {
+    this.synth.dispose();
+    this.synthUp.dispose();
+    this.synthDown.dispose();
+
+    Object.assign(globalControls, newControls);
+
+    this.synth = new Tone.PolySynth().connect(this.effectRack);
+    this.synthUp = new Tone.PolySynth().connect(this.effectRack);
+    this.synthDown = new Tone.PolySynth().connect(this.effectRack);
+
+    this.synth.volume.value = globalControls.volumes.pad;
+    this.synthUp.volume.value = globalControls.volumes.pad;
+    this.synthDown.volume.value = globalControls.volumes.pad;
+
+    this.params = this.generateRandomPadParams();
+    this.setupSynthesizer();
+    this.playConstantMinorChord();
+  }
+
+  adjustSynthParams() {
+    // Add any specific adjustments you want for the pad
+  }
+
   randomOscillatorType() {
     const oscillatorTypes = ['triangle', 'sine', 'sawtooth', 'square'];
     return oscillatorTypes[Math.floor(Math.random() * oscillatorTypes.length)];
   }
 
   setupLFO() {
+    // Create an LFO for the filter frequency
     this.lfo = new Tone.LFO({
       type: 'sine',
-      frequency: Math.random() * 0.05 + 0.01,
-      min: 400,
-      max: 2000,
-      phase: Math.random() * 360,
+      frequency: Math.random() * 0.05 + 0.01, // Randomize frequency for each instance
+      min: 400, // Set the minimum frequency (closed position)
+      max: 2000, // Set the maximum frequency (open position)
+      phase: Math.random() * 360, // Randomize phase
     }).start();
 
+    // Connect the LFO to the filter frequency
     this.lfo.connect(this.effectRack.frequency);
   }
 
   automateParameterChanges() {
     const automationTime = 60;
+
+    // Ensure the LFO is stopped before starting it again
     this.lfo.stop();
+
+    // Start the LFO at a random phase
     this.lfo.phase = Math.random() * 360;
+
+    // Start the LFO
     this.lfo.start();
 
+    // Schedule a stop event after the automation time
     setTimeout(() => {
       this.lfo.stop();
-    }, automationTime * 1000);
+    }, automationTime * 1000); // Convert automationTime to milliseconds
 
+    // Start the Transport to trigger the scheduled changes
     Tone.Transport.start();
   }
 }
 
-// Export the Pad class
-window.Pad = Pad;
+// Instantiate the Pad class
+const pad1 = new Pad(globalControls.volumes.pad, globalControls.globalKey);
+const pad2 = new Pad(globalControls.volumes.pad, globalControls.globalKey);
+const pad3 = new Pad(globalControls.volumes.pad, globalControls.globalKey);
+
+// Export the pad instances for use in other files
+window.pad1 = pad1;
+window.pad2 = pad2;
+window.pad3 = pad3;
