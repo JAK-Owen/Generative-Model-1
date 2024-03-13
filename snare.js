@@ -15,19 +15,27 @@ class Snare {
   setRandomSnareParameters() {
     const attack = this.randomInRange(0.001, 0.01);
     const decay = this.randomInRange(0.01, 0.1);
+    const sustain = this.randomInRange(0.001, 0.01);
+    const release = this.randomInRange(0.001, 0.02);
+    const pitch = this.randomInRange(-12, 12);
+    const filterFrequency = this.randomInRange(1000, 5000); 
+    const filterQ = this.randomInRange(1, 5); 
+    const noiseType = Math.random() < 0.5 ? 'white' : 'pink'; // Randomly choose between white and pink noise
+    const modulationIndex = this.randomInRange(5, 20); 
 
     const envelope = {
       attack: attack || 0.001,
       decay: decay || 0.01,
-      release: 0.02,
+      sustain: sustain || 0,
+      release: release || 0.02,
     };
 
     this.synth = new Tone.NoiseSynth({
       envelope: envelope,
       filter: {
         type: 'lowpass',
-        frequency: 3000,
-        Q: 5,
+        frequency: filterFrequency,
+        Q: filterQ,
       },
       filterEnvelope: {
         attack: 0.001,
@@ -35,14 +43,20 @@ class Snare {
         sustain: 0,
       },
       noise: {
-        type: 'white',
+        type: noiseType,
       },
+      modulationIndex: modulationIndex,
+      // Do not set volume here
     }).toDestination();
+
+    this.synth.pitch = pitch;
   }
 
   // Function to trigger attack and release of the snare
   triggerAttackRelease(time) {
-    this.synth.triggerAttackRelease("8n", time);
+    if (this.synth) {
+      this.synth.triggerAttackRelease("8n", time);
+    }
   }
 
   // Function to generate a random number within a specified range
@@ -52,21 +66,28 @@ class Snare {
 
   // Function to update volume based on global controls
   updateVolume() {
-    this.synth.volume.value = globalControls.volumes.snare;
+    if (this.synth) {
+      this.synth.volume.value = globalControls.volumes.snare;
+    }
   }
 
   // Function to update global controls
   updateGlobalControls(newControls) {
-    this.synth.dispose();
+    if (this.synth) {
+      this.synth.dispose();
+    }
     Object.assign(this, newControls);
     this.setRandomSnareParameters();
     this.updateVolume();
-    this.synth = new Tone.NoiseSynth({
-      envelope: this.synth.envelope,
-      filter: this.synth.filter,
-      filterEnvelope: this.synth.filterEnvelope,
-      noise: this.synth.noise,
-    }).toDestination();
+    if (this.synth) {
+      this.synth = new Tone.NoiseSynth({
+        envelope: this.synth.envelope,
+        filter: this.synth.filter,
+        filterEnvelope: this.synth.filterEnvelope,
+        noise: this.synth.noise,
+        modulationIndex: this.synth.modulationIndex,
+      }).toDestination();
+    }
   }
 }
 
