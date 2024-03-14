@@ -8,17 +8,17 @@ class Pad {
 
     const highPassFilter = new Tone.Filter({
       type: 'highpass',
-      frequency: 500,
+      frequency: 600,
       rolloff: -12,
     });
 
     const reverb = new Tone.Reverb({
       decay: Math.random() * 10 + 1,
-      wet: 0.9,
+      wet: 1,
     }).toDestination();
 
     const delay = new Tone.FeedbackDelay({
-      wet: 0.5,
+      wet: 1,
       delayTime: Math.random() * 0.5 + 0.1,
       feedback: Math.random() * 0.5,
     }).toDestination();
@@ -51,11 +51,11 @@ class Pad {
     }
 
     if (this.synthUp && this.noteUp.every((note) => note !== null)) {
-      this.synthUp.triggerAttack(this.noteUp);
+      this.synthUp.triggerAttack(this.noteUp.map(note => Tone.Frequency(note).transpose(7).toNote()));
     }
 
     if (this.synthDown && this.noteDown.every((note) => note !== null)) {
-      this.synthDown.triggerAttack(this.noteDown);
+      this.synthDown.triggerAttack(this.noteDown.map(note => Tone.Frequency(note).transpose(-12).toNote()));
     }
   }
 
@@ -69,11 +69,11 @@ class Pad {
     this.playConstantMinorChord();
 
     if (this.synthUp) {
-      this.synthUp.triggerAttack(this.noteUp);
+      this.synthUp.triggerAttack(this.noteUp.map(note => Tone.Frequency(note).transpose(7).toNote()));
     }
 
     if (this.synthDown) {
-      this.synthDown.triggerAttack(this.noteDown);
+      this.synthDown.triggerAttack(this.noteDown.map(note => Tone.Frequency(note).transpose(-12).toNote()));
     }
 
     // Adjust start times to avoid conflicts

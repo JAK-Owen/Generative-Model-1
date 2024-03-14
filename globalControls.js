@@ -7,7 +7,7 @@ const globalControls = {
     snare: -10,
     hiHat: -9,
     bass: -6,
-    pad: -25,
+    pad: -28,
   },
   globalKey: "G",
   bpm: 128,
