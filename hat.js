@@ -36,7 +36,7 @@ class HiHat {
 
   // Function to trigger attack and release of the hi-hat
   triggerAttackRelease(time) {
-    this.synth.triggerAttackRelease("16n", time);
+    this.synth.triggerAttackRelease("8n", time);
   }
 
   // Function to generate a random number within a specified range
@@ -55,7 +55,6 @@ class HiHat {
     Object.assign(this, newControls);
     this.setRandomHatParameters();
     this.updateVolume();
-    this.synth.toDestination();
   }
 }
 
@@ -67,7 +66,26 @@ const hiHatPattern = new Tone.Pattern((time, note) => {
   if (note !== null) {
     hiHat.triggerAttackRelease(time);
   }
-}, ["C2"]).start("8n");
+}, ["C2"]).start("4n.");
+
+// Add delay effect
+const delayEffect = new Tone.FeedbackDelay({
+  delayTime: 0.9,
+  wet: 0.10,
+  feedback: 0.6
+}).toDestination();
+
+// Connect hi-hat synth to delay effect
+hiHat.synth.connect(delayEffect);
+
+// Create ramp automation for wet parameter
+const rampUpDuration = Tone.Time("2m");
+const rampDownDuration = Tone.Time("2m");
+
+delayEffect.wet.setValueAtTime(0, 0);
+delayEffect.wet.linearRampToValueAtTime(0.1, rampUpDuration.toSeconds());
+delayEffect.wet.linearRampToValueAtTime(0, rampDownDuration.toSeconds());
+
 
 // Export the hiHat instance for use in other files
 window.hiHat = hiHat;
