@@ -1,7 +1,7 @@
 class Lead {
   constructor(volume, globalKey) {
     this.rootNote = globalKey + '3'; // Setting the root note based on the global key
-    this.scale = this.generateMinorScale(globalKey); // Generating the minor scale based on the global key
+    this.scale = this.generateMinorTriad(globalKey); // Generating the minor triad based on the global key
     this.synth = new Tone.PolySynth().toDestination(); // Creating a polyphonic synthesizer
 
     // Setting volume of the synthesizer
@@ -17,17 +17,20 @@ class Lead {
     this.playMelody();
   }
 
-  // Method to generate the minor scale based on the root note
-  generateMinorScale(rootNote) {
-    // Logic to generate minor scale based on root note
-    return ['C', 'D', 'Eb', 'F', 'G', 'Ab', 'Bb'].map(note => note + '3'); // Placeholder logic
+  // Method to generate the minor triad based on the root note
+  generateMinorTriad(rootNote) {
+    const notes = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+    const rootIndex = notes.indexOf(rootNote.charAt(0).toUpperCase() + rootNote.slice(1));
+    const minorTriad = [rootIndex, (rootIndex + 3) % 12, (rootIndex + 7) % 12]; // Minor triad pattern
+    return minorTriad.map(index => notes[index] + '3');
   }
 
-  // Method to generate a random melody using notes from the minor scale
+  // Method to generate a random melody using notes from the minor triad
   generateRandomMelody() {
-    // Logic to generate a random melody using notes from the minor scale
-    const melodyLength = 8;
-    return Array.from({ length: melodyLength }, () => this.scale[Math.floor(Math.random() * this.scale.length)]); // Placeholder logic
+    // Logic to generate a random melody using notes from the minor triad
+    const melodyLength = globalControls.patternLength * this.scale.length;
+    const pattern = Array.from({ length: melodyLength }, (_, index) => this.scale[index % this.scale.length]);
+    return pattern;
   }
 
   // Method to arpeggiate the melody
