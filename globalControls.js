@@ -1,5 +1,3 @@
-// globalControls.js
-
 // Global control parameters
 const globalControls = {
   volumes: {
@@ -8,6 +6,7 @@ const globalControls = {
     hiHat: -9,
     bass: -6,
     pad: -28,
+    lead: -12, 
   },
   globalKey: "G",
   bpm: 128,

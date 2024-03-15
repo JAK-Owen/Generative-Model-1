@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", function () {
   // Initialize Tone.js
   Tone.start();
 
-  // Create instances of kick, hi-hat, snare, bass, and pad
+  // Create instances of kick, hi-hat, snare, bass, pad, and lead
   const kick = new Kick(
     globalControls.volumes.kick,
     `${globalControls.globalKey}1`
@@ -14,6 +14,14 @@ document.addEventListener("DOMContentLoaded", function () {
   const hiHat = new HiHat();
   const snare = new Snare();
   const bass = new Bass(globalControls.volumes.bass, `${globalControls.globalKey}1`);
+  const pad = new Pad(
+    globalControls.volumes.pad,
+    globalControls.globalKey
+  );
+  const lead = new Lead(
+    globalControls.volumes.lead,
+    globalControls.globalKey
+  );
 
   // Drum beat patterns
   const kickPattern = new Tone.Pattern((time, note) => {
@@ -40,13 +48,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }, ["C1", null, null, "C1"]).start(0);
 
-  // Pad instance
-  const pad = new Pad(
-    globalControls.volumes.pad,
-    globalControls.globalKey
-  );
-
-  // Start playing the constant minor chord
+  // Start playing the constant minor chord for pad
   pad.initialize();
 
   // Main loop to control the number of bass loops
@@ -65,13 +67,17 @@ document.addEventListener("DOMContentLoaded", function () {
 
   toggleBtn.addEventListener("click", () => {
     if (!isAudioStarted) {
+      // Start audio playback and trigger lead melody
       Tone.start();
       isAudioStarted = true;
       Tone.Transport.start();
       toggleBtn.textContent = "Stop";
+      lead.playMelody(); // Trigger lead melody
     } else {
+      // Stop audio playback and lead melody
       Tone.Transport.stop();
-      pad.stopPad(); // Call the stopPad method of the pad instance
+      pad.stopPad();
+      lead.synth.triggerRelease(); // Stop the lead synthesizer
       toggleBtn.textContent = "Play";
       isAudioStarted = false;
     }
@@ -84,9 +90,11 @@ document.addEventListener("DOMContentLoaded", function () {
     snare.createNewSnare(globalControls.volumes.snare, `${globalControls.globalKey}1`);
     bass.createNewRandomBass(globalControls.volumes.bass, `${globalControls.globalKey}1`);
     pad.createNewRandomPad();
+    lead.updateGlobalControls({ volumes: { lead: globalControls.volumes.lead } }); // Update lead synth volume
     bassLoopCount = 0; // Reset the bass loop count on refresh
   });
 
-  // Export the pad instance for use in other files
+  // Export the pad and lead instances for use in other files
   window.pad = pad;
+  window.lead = lead;
 });
