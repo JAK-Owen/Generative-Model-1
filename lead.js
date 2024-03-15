@@ -22,14 +22,19 @@ class Lead {
     const notes = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
     const rootIndex = notes.indexOf(rootNote.charAt(0).toUpperCase() + rootNote.slice(1));
     const minorTriad = [rootIndex, (rootIndex + 3) % 12, (rootIndex + 7) % 12]; // Minor triad pattern
-    return minorTriad.map(index => notes[index] + '3');
+    return minorTriad.map(index => notes[index]);
   }
 
   // Method to generate a random melody using notes from the minor triad
   generateRandomMelody() {
     // Logic to generate a random melody using notes from the minor triad
     const melodyLength = globalControls.patternLength * this.scale.length;
-    const pattern = Array.from({ length: melodyLength }, (_, index) => this.scale[index % this.scale.length]);
+    const octaves = ['3', '4', '5'];
+    const pattern = Array.from({ length: melodyLength }, () => {
+      const randomNote = this.scale[Math.floor(Math.random() * this.scale.length)];
+      const randomOctave = octaves[Math.floor(Math.random() * octaves.length)];
+      return randomNote + randomOctave;
+    });
     return pattern;
   }
 
