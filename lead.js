@@ -28,18 +28,23 @@ class Lead {
     return minorTriad.map(index => notes[index]);
   }
 
-  // Method to generate a random melody using notes from the minor triad
   generateRandomMelody() {
     // Logic to generate a random melody using notes from the minor triad
-    const melodyLength = globalControls.patternLength * this.scale.length;
+    const melodyLength = globalControls.patternLength * 3; // Limit to 3 notes per pattern
     const octaves = ['3', '4', '5'];
     const pattern = Array.from({ length: melodyLength }, () => {
-      const randomNote = this.scale[Math.floor(Math.random() * this.scale.length)];
-      const randomOctave = octaves[Math.floor(Math.random() * octaves.length)];
-      return randomNote + randomOctave;
+        const numNotes = Math.floor(Math.random() * 3) + 1; // Randomly choose 1 to 3 notes
+        const selectedNotes = [];
+        for (let i = 0; i < numNotes; i++) {
+            const randomNote = this.scale[Math.floor(Math.random() * this.scale.length)];
+            const randomOctave = octaves[Math.floor(Math.random() * octaves.length)];
+            selectedNotes.push(randomNote + randomOctave);
+        }
+        return selectedNotes;
     });
-    return pattern;
-  }
+    return pattern.flat(); // Flatten the array
+}
+
 
   // Method to arpeggiate the melody
   arpeggiateMelody() {
@@ -48,16 +53,20 @@ class Lead {
     this.melody = this.melody.flatMap((note, index) => [note, note, note]);
   }
 
-  // Method to play the melody
   playMelody() {
-    // Play the melody with a polyrhythmic pattern
-    const polyrhythm = [3, 4, 5, 6]; // Define polyrhythmic divisions
-    const subdivision = polyrhythm[Math.floor(Math.random() * polyrhythm.length)]; // Randomly select subdivision
+    const loopLength = globalControls.patternLength * this.melody.length * (1 / 8); // Calculate loop length based on melody length
     const sequence = new Tone.Sequence((time, note) => {
-      this.synth.triggerAttackRelease(note, '8n', time);
-    }, this.melody, `1:${subdivision}`).start();
-  }
+        this.synth.triggerAttackRelease(note, '8n', time);
+    }, this.melody, '2n.').start(0);
+    
+    // Set loop parameters
+    sequence.loop = true;
+    sequence.loopEnd = `0:${loopLength}`;
+}
 
+
+
+  
   // Method to randomize synthesizer parameters
   randomizeSynthParams() {
     const oscillatorTypes = ['sine', 'triangle', 'sawtooth', 'square'];
@@ -100,3 +109,8 @@ class Lead {
     });
   }
 }
+
+// Use the Lead class directly in your application without exporting
+
+// Example usage:
+// const lead = new Lead(0, 'C');
