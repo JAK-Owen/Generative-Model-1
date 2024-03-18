@@ -5,64 +5,60 @@ class Lead {
     this.synth = new Tone.PolySynth().toDestination();
     this.synth.volume.value = volume + globalControls.volumes.lead;
     this.randomizeSynthParams();
-    this.generateRandomMelody(); // Generate melody when instantiated
-    this.arpeggiateMelody();
-    this.playMelody();
+    this.generateRandomRhythm(); // Generate rhythmic pattern when instantiated
+    this.playRhythm();
   }
 
   generateMinorTriad(rootNote) {
+    const octaves = ['2', '3', '4']; // Choose appropriate octave range
     const notes = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
     const rootIndex = notes.indexOf(rootNote.charAt(0).toUpperCase() + rootNote.slice(1));
-    const minorTriad = [rootIndex, (rootIndex + 3) % 12, (rootIndex + 7) % 12];
-    return minorTriad.map(index => notes[index]);
-  }
-
-  generateRandomMelody() {
-    const melodyLength = globalControls.patternLength * 3;
-    const octaves = ['3', '4', '5'];
-
-    // Generate a new melody pattern only if it doesn't exist
-    if (!this.melody) {
-      const pattern = Array.from({ length: melodyLength }, () => {
-        const numNotes = Math.floor(Math.random() * 3) + 1;
-        const selectedNotes = [];
-        for (let i = 0; i < numNotes; i++) {
-          const randomNote = this.scale[Math.floor(Math.random() * this.scale.length)];
-          const randomOctave = octaves[Math.floor(Math.random() * octaves.length)];
-          selectedNotes.push(randomNote + randomOctave);
-        }
-        return selectedNotes;
-      });
-      this.melody = pattern.flat(); // Flatten the array
-    }
-  }
-
-  arpeggiateMelody() {
-    this.melody = this.melody.flatMap((note, index) => [note, note, note]);
-  }
-
-  playMelody() {
-    const loopLength = globalControls.patternLength * this.melody.length;
-    const tempo = Tone.Transport.bpm.value;
-    const noteDuration = (60 / tempo) / 1; // Convert to seconds
-
-    // Create a sequence to hold the melody
-    const sequence = new Tone.Sequence((time, note) => {
-        this.synth.triggerAttackRelease(note, '8n', time);
-    }, this.melody).start(0);
-
-    // Set the loop
-    sequence.loop = true;
-    sequence.loopEnd = loopLength;
-
-    // Start the transport
-    Tone.Transport.start();
+    const minorTriad = [
+        notes[(rootIndex) % 12] + octaves[Math.floor(Math.random() * octaves.length)],
+        notes[(rootIndex + 3) % 12] + octaves[Math.floor(Math.random() * octaves.length)],
+        notes[(rootIndex + 7) % 12] + octaves[Math.floor(Math.random() * octaves.length)]
+    ];
+    return minorTriad;
 }
 
 
-  randomizeNoteDuration() {
-    const noteDurations = ['16n', '8n'];
-    return noteDurations[Math.floor(Math.random() * noteDurations.length)];
+  generateRandomRhythm() {
+    const rhythmLength = globalControls.patternLength * 4; // Adjust length as needed
+    const rhythmPattern = [];
+
+    for (let i = 0; i < rhythmLength; i++) {
+      const shouldPlayNote = Math.random() < 0.7; // Adjust probability as needed
+
+      if (shouldPlayNote) {
+        const randomIndex = Math.floor(Math.random() * this.scale.length);
+        const note = this.scale[randomIndex];
+        rhythmPattern.push(note);
+      } else {
+        rhythmPattern.push(null);
+      }
+    }
+
+    this.rhythmPattern = rhythmPattern;
+}
+
+
+  playRhythm() {
+    const loopLength = globalControls.patternLength * this.rhythmPattern.length;
+    const tempo = Tone.Transport.bpm.value;
+    const noteDuration = (60 / tempo) / 1; // Convert to seconds
+    const noteSpacing = 0.5; // Adjust spacing between notes as needed
+
+    const filteredPattern = this.rhythmPattern.filter(note => note !== null);
+
+    const sequence = new Tone.Sequence((time, note) => {
+      this.synth.triggerAttackRelease(note, '16n', time);
+    }, filteredPattern).start(0);
+
+    sequence.loop = true;
+    sequence.loopEnd = loopLength;
+    sequence.interval = noteDuration + noteSpacing;
+
+    Tone.Transport.start();
   }
 
   randomizeSynthParams() {
@@ -105,6 +101,3 @@ class Lead {
     });
   }
 }
-
-// Usage
-// const lead = new Lead(0, 'C');
