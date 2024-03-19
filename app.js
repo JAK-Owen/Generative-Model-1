@@ -71,7 +71,7 @@ document.addEventListener("DOMContentLoaded", function () {
       Tone.start();
       isAudioStarted = true;
       Tone.Transport.start();
-      toggleBtn.textContent = "Stop";
+      toggleBtn.textContent = "Play/Stop";
       lead.playMelody(); // Trigger lead melody
     } else {
       // Stop audio playback and lead melody
