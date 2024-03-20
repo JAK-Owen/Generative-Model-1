@@ -13,28 +13,46 @@ class Lead {
   addEffectsRack() {
     // Define effects with default parameters
     this.delay = new Tone.Delay({
-      wet: 0.01,
-      delayTime: '8n.',
-      feedback: 0.5
+        wet: 0.01,
+        delayTime: '8n.',
+        feedback: 0.5
     });
-  
+
     this.reverb = new Tone.Reverb({
-      wet: 0.2,
-      decay: 2
+        wet: 0.2,
+        decay: 2
     });
-  
+
     this.lowpassFilter = new Tone.Filter({
-      type: 'lowpass', // Default to lowpass filter type
-      frequency: 1000, // Default frequency
-      rolloff: -12 // Default rolloff
+        type: 'lowpass', // Default to lowpass filter type
+        frequency: 20000, // Default frequency
+        rolloff: -12 // Default rolloff
     });
-  
+
+    // Add an LFO (Low Frequency Oscillator)
+    const lfo = new Tone.LFO({
+        type: "sine", // You can change the type of the LFO waveform as needed
+        min: 0.0001, // Minimum value for the modulation (40% of 1000)
+        max: 20000, // Maximum value for the modulation (100% of 1000)
+        frequency: 1 / 100 // Frequency of the LFO (full cycle in 30 seconds)
+    }).start();
+
+
+    // Connect the LFO to modulate the filter frequency
+    lfo.connect(this.lowpassFilter.frequency);
+
     // Connect effects
-    this.synth.connect(this.delay);
-    this.delay.connect(this.reverb);
-    this.reverb.connect(this.lowpassFilter);
-    this.lowpassFilter.toDestination();
-  }
+    this.synth.connect(this.delay); // Connect synth to delay
+    this.delay.connect(this.reverb); // Connect delay to reverb
+    this.reverb.connect(this.lowpassFilter); // Connect reverb to lowpass filter
+    this.lowpassFilter.toDestination(); // Connect lowpass filter to destination
+
+    // Connect delay output to the destination
+    this.delay.toDestination();
+}
+
+
+
   
 
   generateMinorTriad(rootNote) {
