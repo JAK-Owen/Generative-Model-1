@@ -4,13 +4,41 @@ class Lead {
     this.scale = this.generateMinorTriad(globalKey);
     this.synth = new Tone.PolySynth().toDestination();
     this.synth.volume.value = volume + globalControls.volumes.lead;
+    this.addEffectsRack();
     this.randomizeSynthParams();
     this.generateRandomRhythm(); // Generate rhythmic pattern when instantiated
     this.playRhythm();
   }
 
+  addEffectsRack() {
+    // Define effects with default parameters
+    this.delay = new Tone.Delay({
+      wet: 0.01,
+      delayTime: '8n.',
+      feedback: 0.5
+    });
+  
+    this.reverb = new Tone.Reverb({
+      wet: 0.2,
+      decay: 2
+    });
+  
+    this.lowpassFilter = new Tone.Filter({
+      type: 'lowpass', // Default to lowpass filter type
+      frequency: 1000, // Default frequency
+      rolloff: -12 // Default rolloff
+    });
+  
+    // Connect effects
+    this.synth.connect(this.delay);
+    this.delay.connect(this.reverb);
+    this.reverb.connect(this.lowpassFilter);
+    this.lowpassFilter.toDestination();
+  }
+  
+
   generateMinorTriad(rootNote) {
-    const octaves = ['2', '3', '4']; // Choose appropriate octave range
+    const octaves = [ '3', '4']; // Choose appropriate octave range
     const notes = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
     const rootIndex = notes.indexOf(rootNote.charAt(0).toUpperCase() + rootNote.slice(1));
     const minorTriad = [
