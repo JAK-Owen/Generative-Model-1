@@ -6,9 +6,9 @@ const globalControls = {
     hiHat: -9,
     bass: -6,
     pad: -28,
-    lead: -15, 
+    lead: -18, 
   },
-  globalKey: "G",
+  globalKey: "F",
   bpm: 128,
   patternLength: 1,
 };
