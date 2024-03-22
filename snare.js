@@ -103,3 +103,8 @@ const snarePattern = new Tone.Pattern((time, note) => {
 
 // Export the snare instance for use in other files
 window.snare = snare;
+
+// Connect to controlPanel
+window.updateSnareControlsPanel = (newControls) => {
+  snare.updateGlobalControls(newControls);
+};

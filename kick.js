@@ -49,17 +49,13 @@ class Kick {
     return oscillatorTypes[Math.floor(Math.random() * oscillatorTypes.length)];
   }
 
-  // Method to update the key
+  updateVolume(volume) {
+    this.synth.volume.value = volume;
+  }
+
   updateKey(key) {
     this.synth.set({
       pitch: key
-    });
-  }
-
-  // Method to update the synth volume
-  updateSynthVolume(volume) {
-    this.synth.set({
-      volume: volume
     });
   }
 }
