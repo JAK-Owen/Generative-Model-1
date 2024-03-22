@@ -3,7 +3,8 @@ class Kick {
     this.params = this.generateRandomKickParams();
     this.synth = new Tone.MembraneSynth({
       ...this.params,
-      volume: volume + globalControls.volumes.kick,
+      volume: volume,
+      pitch: `${globalControls.globalKey}1`, // Initialize pitch with globalKey
     }).toDestination();
   }
 
@@ -33,18 +34,33 @@ class Kick {
     this.synth.triggerAttackRelease(note, "8n", time);
   }
 
-  createNewKick(volume) {
+  createNewKick(volume, key) {
     this.synth.dispose();
     this.params = this.generateRandomKickParams();
     this.synth = new Tone.MembraneSynth({
       ...this.params,
-      volume: volume + globalControls.volumes.kick,
+      volume: volume,
+      pitch: key, // Use the provided key
     }).toDestination();
   }
 
   randomOscillatorType() {
     const oscillatorTypes = ["sine", "triangle"];
     return oscillatorTypes[Math.floor(Math.random() * oscillatorTypes.length)];
+  }
+
+  // Method to update the key
+  updateKey(key) {
+    this.synth.set({
+      pitch: key
+    });
+  }
+
+  // Method to update the synth volume
+  updateSynthVolume(volume) {
+    this.synth.set({
+      volume: volume
+    });
   }
 }
 
