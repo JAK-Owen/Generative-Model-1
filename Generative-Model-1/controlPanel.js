@@ -1,4 +1,4 @@
-// Function to create the control panel UI
+// Ccreate the control panel UI
 function createControlPanel() {
     const controlPanel = document.createElement('div');
     controlPanel.classList.add('control-panel');

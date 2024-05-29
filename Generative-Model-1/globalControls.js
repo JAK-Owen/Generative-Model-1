@@ -13,7 +13,7 @@ var globalControls = {
   patternLength: 1,
 };
  
-// Function to update global controls
+// Update global controls
 function updateGlobalControls(newControls) {
   Object.assign(globalControls, newControls);
 }
