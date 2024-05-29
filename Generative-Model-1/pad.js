@@ -10,7 +10,7 @@ class Pad {
       type: 'highpass',
       frequency: 600,
       rolloff: -12,
-    });
+    }); 
 
     const reverb = new Tone.Reverb({
       decay: Math.random() * 10 + 1,

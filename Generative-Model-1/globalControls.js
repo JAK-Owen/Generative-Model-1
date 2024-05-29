@@ -12,7 +12,7 @@ var globalControls = {
   bpm: 128,
   patternLength: 1,
 };
-
+ 
 // Function to update global controls
 function updateGlobalControls(newControls) {
   Object.assign(globalControls, newControls);

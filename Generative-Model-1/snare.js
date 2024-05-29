@@ -10,7 +10,7 @@ class Snare {
     // Set initial volume using the updateVolume function
     this.updateVolume();
   }
-
+ 
   // Function to set random snare parameters
   setRandomSnareParameters() {
     const attack = this.randomInRange(0.001, 0.01);

@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const maxBassLoops = 4;
 
   // Initialize Tone.js
-  Tone.start();
+  Tone.start(); 
 
   // Create instances of kick, hi-hat, snare, bass, pad, and lead
   const kick = new Kick(

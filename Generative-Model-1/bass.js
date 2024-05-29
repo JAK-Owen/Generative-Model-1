@@ -5,7 +5,7 @@ class Bass {
       ...this.params,
       volume: volume + globalControls.volumes.bass,
       polyphony: 1,
-    });
+    }); 
  
     // Add a low-pass filter with a cutoff frequency of 50Hz
     this.lowPassFilter = new Tone.Filter({

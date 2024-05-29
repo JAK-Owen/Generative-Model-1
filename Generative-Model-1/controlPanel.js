@@ -15,7 +15,7 @@ function createControlPanel() {
         const input = createInput(control, null, globalControls[control], controlPanel);
         controlPanel.appendChild(input);
       }
-    }
+    } 
   
     // Append the control panel to the body
     document.body.appendChild(controlPanel);

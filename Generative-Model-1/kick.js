@@ -11,7 +11,7 @@ class Kick {
   generateRandomKickParams() {
     const minPitch = Tone.Frequency(`${globalControls.globalKey}1`).toMidi();
     const maxPitch = Tone.Frequency(`${globalControls.globalKey}2`).toMidi();
-
+ 
     return {
       pitchDecay: Math.random() * 0.1 + 0.01,
       octaves: Math.floor(Math.random() * 3) + 4,

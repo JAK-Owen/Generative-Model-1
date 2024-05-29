@@ -9,7 +9,7 @@ class Lead {
     this.generateRandomRhythm(); // Generate rhythmic pattern when instantiated
     this.playRhythm();
   }
-
+ 
   addEffectsRack() {
     // Define effects with default parameters
     this.delay = new Tone.Delay({

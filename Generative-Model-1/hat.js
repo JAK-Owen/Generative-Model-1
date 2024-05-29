@@ -12,7 +12,7 @@ class HiHat {
     // Set initial volume using the updateVolume function
     this.updateVolume();
   }
-
+ 
   // Function to set random hi-hat parameters
   setRandomHatParameters() {
     const frequency = this.randomInRange(8000, 12000);
