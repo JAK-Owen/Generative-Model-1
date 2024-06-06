@@ -3,7 +3,7 @@ class Lead {
     this.rootNote = globalKey + '3';
     this.scale = this.generateMinorTriad(globalKey);
     this.synth = new Tone.PolySynth().toDestination();
-    this.synth.volume.value = volume + globalControls.volumes.lead;
+    this.synth.volume.value = volume + window.globalControls.volumes.lead;
     this.addEffectsRack();
     this.randomizeSynthParams();
     this.generateRandomRhythm(); // Generate rhythmic pattern when instantiated
@@ -13,30 +13,29 @@ class Lead {
   addEffectsRack() {
     // Define effects with default parameters
     this.delay = new Tone.Delay({
-        wet: 0.01,
-        delayTime: '8n.',
-        feedback: 0.5
+      wet: 0.01,
+      delayTime: '8n.',
+      feedback: 0.5
     });
 
     this.reverb = new Tone.Reverb({
-        wet: 0.2,
-        decay: 2
+      wet: 0.2,
+      decay: 2
     });
 
     this.lowpassFilter = new Tone.Filter({
-        type: 'lowpass', // Default to lowpass filter type
-        frequency: 20000, // Default frequency
-        rolloff: -12 // Default rolloff
+      type: 'lowpass', // Default to lowpass filter type
+      frequency: 20000, // Default frequency
+      rolloff: -12 // Default rolloff
     });
 
     // Add an LFO (Low Frequency Oscillator)
     const lfo = new Tone.LFO({
-        type: "sine", // You can change the type of the LFO waveform as needed
-        min: 0.0001, // Minimum value for the modulation (40% of 1000)
-        max: 20000, // Maximum value for the modulation (100% of 1000)
-        frequency: 1 / 100 // Frequency of the LFO (full cycle in 30 seconds)
+      type: "sine", // Change the type of the LFO waveform 
+      min: 0.0001, // Minimum value for the modulation (40% of 1000)
+      max: 20000, // Maximum value for the modulation (100% of 1000)
+      frequency: 1 / 100 // Frequency of the LFO (full cycle in 30 seconds)
     }).start();
-
 
     // Connect the LFO to modulate the filter frequency
     lfo.connect(this.lowpassFilter.frequency);
@@ -49,31 +48,26 @@ class Lead {
 
     // Connect delay output to the destination
     this.delay.toDestination();
-}
-
-
-
-  
+  }
 
   generateMinorTriad(rootNote) {
-    const octaves = [ '3', '4']; // Choose appropriate octave range
+    const octaves = ['3', '4']; // Choose octave range
     const notes = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
     const rootIndex = notes.indexOf(rootNote.charAt(0).toUpperCase() + rootNote.slice(1));
     const minorTriad = [
-        notes[(rootIndex) % 12] + octaves[Math.floor(Math.random() * octaves.length)],
-        notes[(rootIndex + 3) % 12] + octaves[Math.floor(Math.random() * octaves.length)],
-        notes[(rootIndex + 7) % 12] + octaves[Math.floor(Math.random() * octaves.length)]
+      notes[(rootIndex) % 12] + octaves[Math.floor(Math.random() * octaves.length)],
+      notes[(rootIndex + 3) % 12] + octaves[Math.floor(Math.random() * octaves.length)],
+      notes[(rootIndex + 7) % 12] + octaves[Math.floor(Math.random() * octaves.length)]
     ];
     return minorTriad;
-}
-
+  }
 
   generateRandomRhythm() {
-    const rhythmLength = globalControls.patternLength * 4; // Adjust length as needed
+    const rhythmLength = window.globalControls.patternLength * 4; // Adjust length 
     const rhythmPattern = [];
 
     for (let i = 0; i < rhythmLength; i++) {
-      const shouldPlayNote = Math.random() < 0.7; // Adjust probability as needed
+      const shouldPlayNote = Math.random() < 0.7; // Adjust probability 
 
       if (shouldPlayNote) {
         const randomIndex = Math.floor(Math.random() * this.scale.length);
@@ -85,14 +79,13 @@ class Lead {
     }
 
     this.rhythmPattern = rhythmPattern;
-}
-
+  }
 
   playRhythm() {
-    const loopLength = globalControls.patternLength * this.rhythmPattern.length;
+    const loopLength = window.globalControls.patternLength * this.rhythmPattern.length;
     const tempo = Tone.Transport.bpm.value;
     const noteDuration = (60 / tempo) / 1; // Convert to seconds
-    const noteSpacing = 0.5; // Adjust spacing between notes as needed
+    const noteSpacing = 0.5; // Adjust spacing between notes
 
     const filteredPattern = this.rhythmPattern.filter(note => note !== null);
 

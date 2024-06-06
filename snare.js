@@ -10,7 +10,7 @@ class Snare {
     // Set initial volume using the updateVolume function
     this.updateVolume();
   }
-
+ 
   // Function to set random snare parameters
   setRandomSnareParameters() {
     const attack = this.randomInRange(0.001, 0.01);
@@ -67,7 +67,7 @@ class Snare {
   // Function to update volume based on global controls
   updateVolume() {
     if (this.synth) {
-      this.synth.volume.value = globalControls.volumes.snare;
+      this.synth.volume.value = window.globalControls.volumes.snare;
     }
   }
 
@@ -76,7 +76,7 @@ class Snare {
     if (this.synth) {
       this.synth.dispose();
     }
-    Object.assign(this, newControls);
+    Object.assign(window.globalControls, newControls);
     this.setRandomSnareParameters();
     this.updateVolume();
     if (this.synth) {

@@ -3,9 +3,9 @@ class Bass {
     this.params = this.generateRandomBassParams();
     this.synth = new Tone.MembraneSynth({
       ...this.params,
-      volume: volume + globalControls.volumes.bass,
+      volume: volume + window.globalControls.volumes.bass,
       polyphony: 1,
-    });
+    }); 
  
     // Add a low-pass filter with a cutoff frequency of 50Hz
     this.lowPassFilter = new Tone.Filter({
@@ -19,8 +19,8 @@ class Bass {
   }
 
   generateRandomBassParams() {
-    const minPitch = Tone.Frequency(`${globalControls.globalKey}1`).toMidi();
-    const maxPitch = Tone.Frequency(`${globalControls.globalKey}3`).toMidi();
+    const minPitch = Tone.Frequency(`${window.globalControls.globalKey}1`).toMidi();
+    const maxPitch = Tone.Frequency(`${window.globalControls.globalKey}3`).toMidi();
 
     return {
       octaves: Math.floor(Math.random() * 2) + 3,
@@ -49,7 +49,7 @@ class Bass {
     this.params = this.generateRandomBassParams();
     this.synth = new Tone.MembraneSynth({
       ...this.params,
-      volume: globalControls.volumes.bass,
+      volume: window.globalControls.volumes.bass,
       polyphony: 1,
     });
 
@@ -60,11 +60,11 @@ class Bass {
 
   updateGlobalControls(newControls) {
     this.synth.dispose();
-    Object.assign(globalControls, newControls);
+    Object.assign(window.globalControls, newControls);
     this.params = this.generateRandomBassParams();
     this.synth = new Tone.MembraneSynth({
       ...this.params,
-      volume: globalControls.volumes.bass,
+      volume: window.globalControls.volumes.bass,
       polyphony: 1,
     });
 
@@ -84,7 +84,7 @@ class Bass {
 }
 
 // Create an instance of the Bass class
-const bass = new Bass(globalControls.volumes.bass, `${globalControls.globalKey}1`);
+const bass = new Bass(window.globalControls.volumes.bass, `${window.globalControls.globalKey}1`);
 
 // Bass pattern
 const bassPattern = new Tone.Pattern((time, note) => {
@@ -96,7 +96,7 @@ const bassPattern = new Tone.Pattern((time, note) => {
 
 // Function to generate a more interesting and groovy bass pattern
 function generateRandomBassPattern() {
-  const patternLength = globalControls.patternLength * 4;
+  const patternLength = window.globalControls.patternLength * 4;
   const randomBassPattern = [];
 
   for (let i = 0; i < patternLength; i++) {
@@ -107,7 +107,7 @@ function generateRandomBassPattern() {
       const randomNoteLength = noteLengths[Math.floor(Math.random() * noteLengths.length)];
 
       const pitchVariation = Math.floor(Math.random() * 5) - 2;
-      const pitch = `${globalControls.globalKey}${pitchVariation}`;
+      const pitch = `${window.globalControls.globalKey}${pitchVariation}`;
 
       randomBassPattern.push(`${pitch}${randomNoteLength}`);
     } else {

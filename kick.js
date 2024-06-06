@@ -4,14 +4,14 @@ class Kick {
     this.synth = new Tone.MembraneSynth({
       ...this.params,
       volume: volume,
-      pitch: `${globalControls.globalKey}1`, // Initialize pitch with globalKey
+      pitch: `${window.globalControls.globalKey}1`, // Initialize pitch with globalKey
     }).toDestination();
   }
 
   generateRandomKickParams() {
-    const minPitch = Tone.Frequency(`${globalControls.globalKey}1`).toMidi();
-    const maxPitch = Tone.Frequency(`${globalControls.globalKey}2`).toMidi();
-
+    const minPitch = Tone.Frequency(`${window.globalControls.globalKey}1`).toMidi();
+    const maxPitch = Tone.Frequency(`${window.globalControls.globalKey}2`).toMidi();
+ 
     return {
       pitchDecay: Math.random() * 0.1 + 0.01,
       octaves: Math.floor(Math.random() * 3) + 4,
@@ -61,7 +61,7 @@ class Kick {
 }
 
 // Create an instance of the Kick class
-const kick = new Kick(globalControls.volumes.kick);
+const kick = new Kick(window.globalControls.volumes.kick);
 
 // Drum beat pattern for kick
 const kickPattern = new Tone.Pattern((time, note) => {

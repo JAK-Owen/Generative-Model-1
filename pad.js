@@ -10,7 +10,7 @@ class Pad {
       type: 'highpass',
       frequency: 600,
       rolloff: -12,
-    });
+    }); 
 
     const reverb = new Tone.Reverb({
       decay: Math.random() * 10 + 1,
@@ -26,17 +26,17 @@ class Pad {
     this.effectRack.chain(reverb, delay, highPassFilter);
 
     this.synth = new Tone.PolySynth().connect(this.effectRack);
-    this.synth.volume.value = volume + globalControls.volumes.pad;
+    this.synth.volume.value = volume + window.globalControls.volumes.pad;
     this.globalKey = globalKey;
     this.note = [this.globalKey + '2', this.globalKey + '3', this.globalKey + '4'];
     this.params = this.generateRandomPadParams();
 
     this.synthUp = new Tone.PolySynth().connect(this.effectRack);
-    this.synthUp.volume.value = volume + globalControls.volumes.pad;
+    this.synthUp.volume.value = volume + window.globalControls.volumes.pad;
     this.noteUp = [this.globalKey + '3', this.globalKey + '4', this.globalKey + '5'];
 
     this.synthDown = new Tone.PolySynth().connect(this.effectRack);
-    this.synthDown.volume.value = volume + globalControls.volumes.pad;
+    this.synthDown.volume.value = volume + window.globalControls.volumes.pad;
     this.noteDown = [this.globalKey + '1', this.globalKey + '2', this.globalKey + '3'];
 
     this.setupSynthesizer();
@@ -112,7 +112,7 @@ class Pad {
   createNewRandomPad() {
     this.synth.dispose();
     this.synth = new Tone.PolySynth().connect(this.effectRack);
-    this.synth.volume.value = globalControls.volumes.pad;
+    this.synth.volume.value = window.globalControls.volumes.pad;
     this.params = this.generateRandomPadParams();
     this.setupSynthesizer();
     this.playConstantMinorChord();
@@ -123,15 +123,15 @@ class Pad {
     this.synthUp.dispose();
     this.synthDown.dispose();
 
-    Object.assign(globalControls, newControls);
+    Object.assign(window.globalControls, newControls);
 
     this.synth = new Tone.PolySynth().connect(this.effectRack);
     this.synthUp = new Tone.PolySynth().connect(this.effectRack);
     this.synthDown = new Tone.PolySynth().connect(this.effectRack);
 
-    this.synth.volume.value = globalControls.volumes.pad;
-    this.synthUp.volume.value = globalControls.volumes.pad;
-    this.synthDown.volume.value = globalControls.volumes.pad;
+    this.synth.volume.value = window.globalControls.volumes.pad;
+    this.synthUp.volume.value = window.globalControls.volumes.pad;
+    this.synthDown.volume.value = window.globalControls.volumes.pad;
 
     this.params = this.generateRandomPadParams();
     this.setupSynthesizer();
@@ -184,9 +184,9 @@ class Pad {
 }
 
 // Instantiate the Pad class
-const pad1 = new Pad(globalControls.volumes.pad, globalControls.globalKey);
-const pad2 = new Pad(globalControls.volumes.pad, globalControls.globalKey);
-const pad3 = new Pad(globalControls.volumes.pad, globalControls.globalKey);
+const pad1 = new Pad(window.globalControls.volumes.pad, window.globalControls.globalKey);
+const pad2 = new Pad(window.globalControls.volumes.pad, window.globalControls.globalKey);
+const pad3 = new Pad(window.globalControls.volumes.pad, window.globalControls.globalKey);
 
 // Export the pad instances for use in other files
 window.pad1 = pad1;

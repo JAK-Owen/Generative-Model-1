@@ -3,25 +3,13 @@ document.addEventListener("DOMContentLoaded", function () {
   let bassLoopCount = 0;
   const maxBassLoops = 4;
 
-  // Initialize Tone.js
-  Tone.start();
-
   // Create instances of kick, hi-hat, snare, bass, pad, and lead
-  const kick = new Kick(
-    globalControls.volumes.kick,
-    `${globalControls.globalKey}1`
-  );
+  const kick = new Kick(globalControls.volumes.kick, `${globalControls.globalKey}1`);
   const hiHat = new HiHat();
   const snare = new Snare();
   const bass = new Bass(globalControls.volumes.bass, `${globalControls.globalKey}1`);
-  const pad = new Pad(
-    globalControls.volumes.pad,
-    globalControls.globalKey
-  );
-  const lead = new Lead(
-    globalControls.volumes.lead,
-    globalControls.globalKey
-  );
+  const pad = new Pad(globalControls.volumes.pad, globalControls.globalKey);
+  const lead = new Lead(globalControls.volumes.lead, globalControls.globalKey);
 
   // Drum beat patterns
   const kickPattern = new Tone.Pattern((time, note) => {
@@ -68,11 +56,12 @@ document.addEventListener("DOMContentLoaded", function () {
   toggleBtn.addEventListener("click", () => {
     if (!isAudioStarted) {
       // Start audio playback and trigger lead melody
-      Tone.start();
-      isAudioStarted = true;
-      Tone.Transport.start();
-      toggleBtn.textContent = "Play/Stop";
-      lead.playMelody(); // Trigger lead melody
+      Tone.start().then(() => {
+        isAudioStarted = true;
+        Tone.Transport.start();
+        toggleBtn.textContent = "Stop";
+        lead.playMelody(); // Trigger lead melody
+      });
     } else {
       // Stop audio playback and lead melody
       Tone.Transport.stop();

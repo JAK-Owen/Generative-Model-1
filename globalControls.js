@@ -1,5 +1,5 @@
 // Global control parameters
-var globalControls = {
+window.globalControls = {
   volumes: {
     kick: -6,
     snare: -10,
@@ -13,7 +13,7 @@ var globalControls = {
   patternLength: 1,
 };
 
-// Function to update global controls
-function updateGlobalControls(newControls) {
+// Update global controls
+window.updateGlobalControls = function(newControls) {
   Object.assign(globalControls, newControls);
-}
+};

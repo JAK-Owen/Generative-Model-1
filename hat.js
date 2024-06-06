@@ -2,8 +2,8 @@ class HiHat {
   constructor() {
     // Initialize with default parameters
     this.setRandomHatParameters();
-    this.volume = globalControls.volumes.hiHat;
-    this.globalKey = globalControls.globalKey;
+    this.volume = window.globalControls.volumes.hiHat;
+    this.globalKey = window.globalControls.globalKey;
 
     // Connect to globalControls
     window.updateHatVolume = this.updateVolume.bind(this);
@@ -12,7 +12,7 @@ class HiHat {
     // Set initial volume using the updateVolume function
     this.updateVolume();
   }
-
+ 
   // Function to set random hi-hat parameters
   setRandomHatParameters() {
     const frequency = this.randomInRange(8000, 12000);
@@ -52,7 +52,7 @@ class HiHat {
   // Function to update global controls
   updateGlobalControls(newControls) {
     this.synth.dispose();
-    Object.assign(this, newControls);
+    Object.assign(window.globalControls, newControls);
     this.setRandomHatParameters();
     this.updateVolume();
   }
